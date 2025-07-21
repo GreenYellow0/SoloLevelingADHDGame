@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Progress Tracker</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --panel: #1e1e2e;
+      --accent: #ffcc00;
+      --highlight: #00d1ff;
+      --text: #f0f0f0;
+      --xp-fill: #00ffcc;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .nav, .xp-bar-container {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 10px;
+      background: var(--panel);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav button, .nav input[type="file"] {
+      background: var(--highlight);
+      color: #000;
+      border: none;
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    .section {
+      display: none;
+      max-width: 800px;
+      margin: auto;
+      padding: 20px;
+    }
+    .active {
+      display: block;
+    }
+    h2 {
+      color: var(--accent);
+    }
+    .panel, .modal-content {
+      background: var(--panel);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .xp-bar {
+      flex: 1;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
+    }
+    .xp-fill {
+      height: 100%;
+      background: var(--xp-fill);
+      text-align: right;
+      padding-right: 10px;
+      color: #000;
+      font-weight: bold;
+      transition: width 0.4s ease;
+    }
+    ul { list-style: none; padding: 0; }
+    li {
+      background: #2a2a3a;
+      padding: 10px;
+      border-radius: 8px;
+      margin: 8px 0;
+      cursor: pointer;
+      display: flex; /* Flexbox for alignment */
+      justify-content: space-between; /* Space out text and "days left" */
+      align-items: center;
+    }
+    li.done {
+        opacity: 0.6; /* Indicate completed quests, but keep them visible (optional) */
+        text-decoration: line-through;
+        cursor: default;
+    }
+    .shop-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px; /* Spacing for shop items */
+    }
+    .shop-menu button {
+        background: var(--panel);
+        color: var(--text);
+        border: 1px solid var(--highlight);
+        padding: 8px 16px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 8px;
+        margin-right: 10px;
+    }
+    .shop-submenu {
+        display: none; /* Subpages in shop are hidden by default */
+    }
+    .shop-submenu.active {
+        display: block;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Ensure modal is on top */
+    }
+    .modal-content button {
+      margin: 10px;
+      padding: 8px 16px;
+      font-weight: bold;
+      background: var(--highlight);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="xp-bar-container">
+    <div class="xp-bar"><div class="xp-fill" id="xpFill">0 XP</div></div>
+  </div>
+  <div class="nav">
+    <button onclick="showPage('status')">Status</button>
+    <button onclick="showPage('quests')">Quests</button>
+    <button onclick="showPage('shop')">Shop</button>
+    <button onclick="saveProgress()">Save Progress</button>
+    <input type="file" onchange="loadProgress(event)">
+  </div>
+
+  <div id="status" class="section active">
+    <h2>Status Wes</h2>
+    <div class="panel">
+      <p><strong>Level:</strong> <span id="level">1</span></p>
+      <p><strong>Points:</strong> <span id="points">0</span></p>
+      <p><strong>Gold:</strong> <span id="gold">0</span></p> <p><strong>Current Rank:</strong> <span id="rank">F</span></p>
+      <p><strong>Available Ranks:</strong> F, E, D, C, B, A, S, S+, S++</p>
+    </div>
+  </div>
+
+  <div id="quests" class="section">
+    <h2>Daily Quests</h2>
+    <ul id="dailyList"></ul>
+    <h2>Special Quests</h2>
+    <ul id="specialList"></ul>
+    <h2>Streak Challenges</h2> <ul id="streakList"></ul>
+  </div>
+
+  <div id="shop" class="section">
+    <h2>Shop</h2>
+    <div class="panel shop-menu active">
+      <p>You have <strong><span id="shopPoints">0</span> points</strong> and <strong><span id="shopGold">0</span> Gold</strong>.</p>
+      <button onclick="showShopPage('rankUpgrades')">Rank Upgrades</button>
+      <button onclick="showShopPage('currencyExchange')">Currency Exchange</button>
+      <button onclick="showShopPage('realLifeRewards')">Real-Life Rewards</button>
+      <button onclick="showShopPage('shopInfo')">Info</button>
+    </div>
+
+    <div id="rankUpgrades" class="panel shop-submenu">
+      <h3>Rank Upgrades</h3>
+      <ul id="rankUpgradeList">
+        </ul>
+      <button onclick="showShopPage('mainShop')">Back to Shop</button>
+    </div>
+
+    <div id="currencyExchange" class="panel shop-submenu">
+      <h3>Currency Exchange</h3>
+      <p>Convert your Points into Gold for special rewards!</p>
+      <div class="shop-item">
+        <span>100 Points = 1 Gold</span>
+        <button onclick="convertPointsToGold()">Convert</button>
+      </div>
+      <button onclick="showShopPage('mainShop')">Back to Shop</button>
+    </div>
+
+    <div id="realLifeRewards" class="panel shop-submenu">
+      <h3>Real-Life Rewards</h3>
+      <p>Purchase these rewards with Gold for a real-life treat! (Self-enforced)</p>
+      <ul id="realLifeRewardsList">
+        </ul>
+      <button onclick="showShopPage('mainShop')">Back to Shop</button>
+    </div>
+
+    <div id="shopInfo" class="panel shop-submenu">
+      <h3>Shop Info: Understanding Ranks & Progression</h3>
+      <p>Your journey through the ranks is central to your progress! Each rank (F, E, D, C, B, A, S, S+, S++) signifies your growth and grants you a bonus to the XP and Points you earn from completing quests.</p>
+      <p><strong>To upgrade your Rank:</strong></p>
+      <ul>
+        <li>You must reach a **specific minimum Level**.</li>
+        <li>You must gather a **specific amount of Points**.</li>
+      </ul>
+      <p>This dual requirement ensures that you are consistently engaging with your daily habits (for XP & Levels) and tackling more significant challenges (for Points) to advance.</p>
+      <p><strong>Progressive Difficulty:</strong> The requirements for both Level and Points increase as you climb higher in the ranks, making your journey challenging and rewarding!</p>
+      <button onclick="showShopPage('mainShop')">Back to Shop</button>
+    </div>
+
+  </div>
+
+  <div class="modal" id="questModal">
+    <div class="modal-content panel">
+      <p id="modalText"></p>
+      <button onclick="confirmQuest(true)">Yes</button>
+      <button onclick="confirmQuest(false)">No</button>
+    </div>
+  </div>
+
+  <script>
+    const ranks = ["F", "E", "D", "C", "B", "A", "S", "S+", "S++"];
+    const rankMultiplier = [
+        1,    // F-Rank: 0% bonus (basis)
+        1.05, // E-Rank: 5% bonus
+        1.1,  // D-Rank: 10% bonus
+        1.15, // C-Rank: 15% bonus
+        1.2,  // B-Rank: 20% bonus
+        1.25, // A-Rank: 25% bonus
+        1.3,  // S-Rank: 30% bonus
+        1.35, // S+-Rank: 35% bonus
+        1.4   // S++-Rank: 40% bonus
+    ];
+
+    const rankLevelRequirements = [
+        1,   // F-Rank start op Level 1 (of je bent al Level 1)
+        2,   // E-Rank vereist Level 2 (om van F naar E te gaan)
+        4,   // D-Rank vereist Level 4 (om van E naar D te gaan)
+        7,   // C-Rank vereist Level 7
+        10,  // B-Rank vereist Level 10
+        14,  // A-Rank vereist Level 14
+        18,  // S-Rank vereist Level 18
+        23,  // S+-Rank vereist Level 23
+        29   // S++-Rank vereist Level 29
+    ];
+
+    let data = {
+      level: 1,
+      xp: 0,
+      points: 0,
+      gold: 0,
+      rank: 0,
+      dailyQuests: [
+        { id: 'brush_teeth_1', text: "Brush teeth (morning)", xp: 10, points: 2, done: false },
+        { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
+        { id: 'take_meds', text: "Take meds (in less than 10 min)", xp: 15, points: 3, done: false },
+        { id: 'drink_water', text: "Drink water (2L)", xp: 20, points: 4, done: false },
+        { id: 'plan_day', text: "Plan your day", xp: 25, points: 5, done: false },
+        { id: 'quick_tidy', text: "Quick tidy-up", xp: 25, points: 5, done: false }
+      ],
+      allSpecialQuests: [
+        { text: "Clean desk", xp: 80, points: 20 },
+        { text: "Exercise for 30min", xp: 100, points: 25 },
+        { text: "Learn something new (1hr)", xp: 150, points: 35 },
+        { text: "Organize files", xp: 120, points: 30 },
+        { text: "Cook a healthy meal", xp: 110, points: 28 },
+        { text: "Read a book (30min)", xp: 100, points: 22 },
+        { text: "Practice a hobby", xp: 130, points: 32 },
+        { text: "Deep clean room", xp: 200, points: 50 },
+        { text: "Complete significant project", xp: 300, points: 75 }
+      ],
+      activeSpecials: [],
+      lastDailyReset: new Date().toDateString(),
+      lastSpecialReset: new Date().toDateString(),
+      realLifeRewards: [
+        { id: 'gaming_hour', text: "1 hour of gaming", cost: 10, bought: false },
+        { id: 'favorite_meal', text: "Order your favorite meal", cost: 25, bought: false },
+        { id: 'new_book', text: "Buy a new book", cost: 50, bought: false },
+        { id: 'day_off', text: "Take a full day off work/tasks", cost: 100, bought: false },
+        { id: 'weekend_trip', text: "Plan a weekend getaway", cost: 250, bought: false }
+      ],
+      // NIEUW: Streak Tracking Data
+      dailyStreaks: {
+        'brush_teeth_daily': { current: 0, lastCompletionDate: null }, // Track completion of BOTH brush teeth daily quests
+        'take_meds_daily': { current: 0, lastCompletionDate: null }
+      },
+      // NIEUW: Streak Quests (Once in a Lifetime)
+      streakQuests: [
+        { id: 'brush_7_days', parentQuestId: 'brush_teeth_daily', threshold: 7, text: "Brush teeth 7 days in a row", xp: 500, points: 100, gold: 5, done: false },
+        { id: 'brush_14_days', parentQuestId: 'brush_teeth_daily', threshold: 14, text: "Brush teeth 14 days in a row", xp: 1000, points: 200, gold: 10, done: false },
+        { id: 'brush_30_days', parentQuestId: 'brush_teeth_daily', threshold: 30, text: "Brush teeth 1 month in a row", xp: 2500, points: 500, gold: 25, done: false },
+        { id: 'meds_2_days', parentQuestId: 'take_meds_daily', threshold: 2, text: "Took meds 2 days in a row", xp: 150, points: 30, gold: 2, done: false },
+        { id: 'meds_4_days', parentQuestId: 'take_meds_daily', threshold: 4, text: "Took meds 4 days in a row", xp: 300, points: 60, gold: 4, done: false },
+        { id: 'meds_7_days', parentQuestId: 'take_meds_daily', threshold: 7, text: "Took meds 1 week in a row", xp: 600, points: 120, gold: 8, done: false },
+        { id: 'meds_14_days', parentQuestId: 'take_meds_daily', threshold: 14, text: "Took meds 2 weeks in a row", xp: 1200, points: 240, gold: 15, done: false },
+        { id: 'meds_30_days', parentQuestId: 'take_meds_daily', threshold: 30, text: "Took meds 1 month in a row", xp: 3000, points: 600, gold: 30, done: false }
+      ]
+    };
+
+    let currentQuestType = null;
+    let currentQuestIndex = null;
+
+    // --- Core UI & Logic Functions ---
+
+    function updateUI() {
+      document.getElementById("level").textContent = data.level;
+      document.getElementById("points").textContent = data.points;
+      document.getElementById("gold").textContent = data.gold; // Update Gold display in Status
+      document.getElementById("shopPoints").textContent = data.points;
+      document.getElementById("shopGold").textContent = data.gold; // Update Gold display in Shop
+      document.getElementById("rank").textContent = ranks[data.rank];
+
+      let xpNeeded = data.level * 200;
+      let percent = Math.min((data.xp / xpNeeded) * 100, 100);
+      let fill = document.getElementById("xpFill");
+      fill.style.width = percent + "%";
+      fill.textContent = `${data.xp} / ${xpNeeded} XP`;
+
+      // Daily Quests UI
+      const dList = document.getElementById("dailyList");
+      dList.innerHTML = "";
+      data.dailyQuests.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P)`;
+        if (q.done) {
+          li.classList.add('done');
+        } else {
+          li.onclick = () => openModal("daily", i);
+        }
+        dList.appendChild(li);
+      });
+
+      // Special Quests UI
+      const sList = document.getElementById("specialList");
+      sList.innerHTML = "";
+      data.activeSpecials.forEach((q, i) => {
+        const li = document.createElement("li");
+        let daysLeftText = q.daysLeft > 0 ? ` – ${q.daysLeft} day${q.daysLeft !== 1 ? 's' : ''} left` : ' – Expired';
+        li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P)`;
+        const spanDaysLeft = document.createElement('span');
+        spanDaysLeft.textContent = daysLeftText;
+        li.appendChild(spanDaysLeft);
+
+        if (q.done || q.daysLeft <= 0) {
+          li.classList.add('done');
+        } else {
+          li.onclick = () => openModal("special", i);
+        }
+        sList.appendChild(li);
+      });
+
+      // NIEUW: Streak Quests UI
+      const streakList = document.getElementById("streakList");
+      streakList.innerHTML = "";
+      data.streakQuests.forEach((q, i) => {
+          const li = document.createElement("li");
+          li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P / +${q.gold} Gold)`;
+          if (q.done) {
+              li.classList.add('done');
+          } else {
+              // Optioneel: toon huidige streak voortgang
+              const parentStreak = data.dailyStreaks[q.parentQuestId];
+              if (parentStreak) {
+                  const currentProgress = parentStreak.current;
+                  li.textContent += ` (Current streak: ${currentProgress}/${q.threshold} days)`;
+              }
+              // Streak quests worden automatisch voltooid, niet via klik
+              li.style.cursor = 'default'; // Maak niet klikbaar
+          }
+          streakList.appendChild(li);
+      });
+
+
+      // Update Shop lijsten
+      updateRankUpgradeList();
+      updateRealLifeRewardsList();
+    }
+
+    function openModal(type, index) {
+      const list = type === "daily" ? data.dailyQuests : data.activeSpecials;
+      const q = list[index];
+
+      if (q.done || (type === "special" && q.daysLeft <= 0)) {
+        return;
+      }
+
+      currentQuestType = type;
+      currentQuestIndex = index;
+      document.getElementById("modalText").textContent = `Did you complete: ${q.text}?`;
+      document.getElementById("questModal").style.display = "flex";
+    }
+
+    function confirmQuest(yes) {
+      document.getElementById("questModal").style.display = "none";
+      if (yes) {
+        const list = currentQuestType === "daily" ? data.dailyQuests : data.activeSpecials;
+        const q = list[currentQuestIndex];
+
+        if (!q.done && !(currentQuestType === "special" && q.daysLeft <= 0)) {
+          q.done = true;
+          data.xp += Math.floor(q.xp * rankMultiplier[data.rank]);
+          data.points += Math.floor(q.points * rankMultiplier[data.rank]);
+          checkLevelUp();
+          
+          // NIEUW: Controleer en update streaks na het voltooien van een daily quest
+          if (currentQuestType === "daily") {
+              // Geef de ID van de voltooide daily quest door
+              checkStreaks(q.id); 
+          }
+
+          updateUI();
+          console.log(`Quest "${q.text}" completed!`);
+        }
+      }
+    }
+
+    function checkLevelUp() {
+      let needed = data.level * 200;
+      while (data.xp >= needed) {
+        data.xp -= needed;
+        data.level++;
+        needed = data.level * 200;
+        console.log(`Level Up! You are now Level ${data.level}!`);
+      }
+    }
+
+    function showPage(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      if (id === 'shop') {
+          showShopPage('mainShop');
+      }
+    }
+
+    function showShopPage(id) {
+        document.querySelectorAll('.shop-menu, .shop-submenu').forEach(sec => sec.classList.remove('active'));
+        if (id === 'mainShop') {
+            document.querySelector('.shop-menu').classList.add('active');
+        } else {
+            document.getElementById(id).classList.add('active');
+        }
+    }
+
+    function getRankUpgradeCost(targetRankIndex) {
+      const baseCost = 1000;
+      return baseCost + (targetRankIndex * 1500);
+    }
+
+    function updateRankUpgradeList() {
+        const rankList = document.getElementById("rankUpgradeList");
+        rankList.innerHTML = "";
+
+        for (let i = 0; i < ranks.length - 1; i++) {
+            const currentRank = ranks[i];
+            const nextRank = ranks[i + 1];
+            const upgradeLevelRequired = rankLevelRequirements[i + 1];
+            const upgradePointsCost = getRankUpgradeCost(i + 1);
+
+            const li = document.createElement("li");
+            li.innerHTML = `
+                <span>Upgrade from <strong>${currentRank}</strong> to <strong>${nextRank}</strong> Rank:</span><br>
+                <span>Requires: Level ${upgradeLevelRequired}, ${upgradePointsCost} Points</span>
+            `;
+
+            const buyButton = document.createElement("button");
+            buyButton.textContent = "Buy";
+            buyButton.onclick = () => buyRankUpgrade(i);
+            
+            if (data.rank === i) {
+                if (data.level >= upgradeLevelRequired && data.points >= upgradePointsCost) {
+                    buyButton.disabled = false;
+                } else {
+                    buyButton.disabled = true;
+                }
+            } else if (data.rank > i) {
+                buyButton.textContent = "Achieved";
+                buyButton.disabled = true;
+                li.classList.add('done');
+            } else {
+                buyButton.textContent = "Locked";
+                buyButton.disabled = true;
+            }
+
+            li.appendChild(buyButton);
+            rankList.appendChild(li);
+        }
+    }
+
+    function buyRankUpgrade(targetRankIndex) {
+        if (data.rank !== targetRankIndex) {
+            alert("You can only upgrade to your next immediate rank.");
+            return;
+        }
+
+        const nextRankIndex = data.rank + 1;
+        if (nextRankIndex >= ranks.length) {
+            alert("You are already at the highest rank!");
+            return;
+        }
+
+        const upgradeCost = getRankUpgradeCost(nextRankIndex);
+        const requiredLevel = rankLevelRequirements[nextRankIndex];
+        const nextRankName = ranks[nextRankIndex];
+
+        if (data.level >= requiredLevel) {
+            if (data.points >= upgradeCost) {
+                data.points -= upgradeCost;
+                data.rank++;
+                alert(`Congratulations! You are now Rank ${nextRankName}!`);
+                updateUI();
+            } else {
+                alert(`Not enough points! You need ${upgradeCost} points to upgrade to Rank ${nextRankName}.`);
+            }
+        } else {
+            alert(`You need to reach Level ${requiredLevel} to upgrade to Rank ${nextRankName}.`);
+        }
+    }
+
+    function convertPointsToGold() {
+        const pointsToConvert = 100;
+        const goldToGain = 1;
+
+        if (data.points >= pointsToConvert) {
+            data.points -= pointsToConvert;
+            data.gold += goldToGain;
+            alert(`You converted ${pointsToConvert} Points into ${goldToGain} Gold!`);
+            updateUI();
+        } else {
+            alert(`You need at least ${pointsToConvert} Points to convert to Gold.`);
+        }
+    }
+
+    function updateRealLifeRewardsList() {
+        const rewardsList = document.getElementById("realLifeRewardsList");
+        rewardsList.innerHTML = "";
+
+        data.realLifeRewards.forEach(reward => {
+            const li = document.createElement("li");
+            li.innerHTML = `<span>${reward.text}</span>`;
+
+            const buyButton = document.createElement("button");
+            if (reward.bought) {
+                buyButton.textContent = "Claimed";
+                buyButton.disabled = true;
+                li.classList.add('done');
+            } else {
+                buyButton.textContent = `Buy (${reward.cost} Gold)`;
+                buyButton.disabled = data.gold < reward.cost;
+                buyButton.onclick = () => buyRealLifeReward(reward.id);
+            }
+            li.appendChild(buyButton);
+            rewardsList.appendChild(li);
+        });
+    }
+
+    function buyRealLifeReward(rewardId) {
+        const reward = data.realLifeRewards.find(r => r.id === rewardId);
+
+        if (reward && !reward.bought) {
+            if (data.gold >= reward.cost) {
+                data.gold -= reward.cost;
+                reward.bought = true;
+                alert(`Reward purchased! Enjoy your "${reward.text}"!`);
+                updateUI();
+            } else {
+                alert(`Not enough Gold! You need ${reward.cost} Gold to buy "${reward.text}".`);
+            }
+        }
+    }
+
+    // --- NIEUW: Streak Quest Logica ---
+
+    // Deze functie controleert en update de streaks na het voltooien van een daily quest
+    function checkStreaks(completedDailyQuestId) {
+        const today = new Date().toDateString();
+
+        // Logica voor Brush Teeth Streak (als EEN van de tandenpoets quests is gedaan)
+        if (completedDailyQuestId === 'brush_teeth_1' || completedDailyQuestId === 'brush_teeth_2') {
+            // Controleer of de "brush_teeth_daily" streak al is bijgewerkt voor vandaag
+            // Dit voorkomt dubbele telling als beide tandenpoets-taken op dezelfde dag worden voltooid
+            const brushStreak = data.dailyStreaks['brush_teeth_daily'];
+            if (brushStreak.lastCompletionDate !== today) {
+                updateSingleStreak('brush_teeth_daily', today);
+            }
+        }
+
+        // Logica voor Take Meds Streak
+        if (completedDailyQuestId === 'take_meds') {
+            updateSingleStreak('take_meds_daily', today);
+        }
+
+        // Controleer alle streak quests en beloon indien voltooid
+        data.streakQuests.forEach(streakQuest => {
+            if (!streakQuest.done && data.dailyStreaks[streakQuest.parentQuestId] && data.dailyStreaks[streakQuest.parentQuestId].current >= streakQuest.threshold) {
+                streakQuest.done = true;
+                data.xp += streakQuest.xp;
+                data.points += streakQuest.points;
+                data.gold += streakQuest.gold; // Gold verdienen via streak quest!
+                checkLevelUp();
+                alert(`STREAK COMPLETED! You earned a reward for "${streakQuest.text}"! (+${streakQuest.xp} XP / +${streakQuest.points} P / +${streakQuest.gold} Gold)`);
+                console.log(`Streak Quest "${streakQuest.text}" completed!`);
+            }
+        });
+    }
+
+    // Hulpfunctie om een individuele streak bij te werken
+    function updateSingleStreak(streakKey, today) {
+        let streak = data.dailyStreaks[streakKey];
+        if (!streak) { // Initialiseer als het nog niet bestaat
+            streak = { current: 0, lastCompletionDate: null };
+            data.dailyStreaks[streakKey] = streak;
+        }
+
+        const lastDate = streak.lastCompletionDate ? new Date(streak.lastCompletionDate) : null;
+        const currentDate = new Date(today);
+
+        if (lastDate && currentDate.toDateString() === lastDate.toDateString()) {
+            // Al gedaan vandaag, streak blijft hetzelfde
+            return;
+        }
+
+        if (lastDate && (currentDate.getTime() - lastDate.getTime()) === (24 * 60 * 60 * 1000)) {
+            // Als het de volgende dag is, verhoog de streak
+            streak.current++;
+        } else if (lastDate && (currentDate.getTime() - lastDate.getTime()) > (24 * 60 * 60 * 1000)) {
+            // Als er dagen zijn overgeslagen, reset de streak
+            streak.current = 1;
+        } else {
+            // Eerste keer voltooien of reset na lange pauze
+            streak.current = 1;
+        }
+        streak.lastCompletionDate = today;
+        console.log(`${streakKey} streak updated to: ${streak.current}`);
+    }
+
+
+    function saveProgress() {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'progress.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      console.log("Progress saved to progress.json");
+    }
+
+    function loadProgress(e) {
+      const file = e.target.files[0];
+      if (!file) {
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const loadedData = JSON.parse(ev.target.result);
+          
+          // Verbeterd laden van data om nieuwe velden te ondersteunen en defaults te behouden
+          // Zorgt ervoor dat nieuwe velden (zoals dailyStreaks, streakQuests) die niet in oude saves zaten,
+          // de standaardwaarden krijgen in plaats van te crashen of undefined te zijn.
+          data = {
+            ...data, // Start met de default structuur van 'data' (inclusief alle nieuwe velden)
+            ...loadedData // Overwrite met geladen data
+          };
+
+          // Specifieke merge logic voor arrays of objecten die kunnen veranderen over versies
+          // Real-Life Rewards: Zorgt dat nieuwe beloningen verschijnen en de status van oude behouden blijft.
+          if (loadedData.realLifeRewards) {
+              const mergedRewards = data.realLifeRewards.map(defaultReward => {
+                  const loadedReward = loadedData.realLifeRewards.find(lr => lr.id === defaultReward.id);
+                  return loadedReward ? { ...defaultReward, ...loadedReward } : defaultReward;
+              });
+              loadedData.realLifeRewards.forEach(loadedReward => { // Voeg eventuele handmatig toegevoegde/onbekende rewards toe
+                  if (!mergedRewards.some(mr => mr.id === loadedReward.id)) {
+                      mergedRewards.push(loadedReward);
+                  }
+              });
+              data.realLifeRewards = mergedRewards;
+          }
+
+          // NIEUW: Voor streakQuests, merge op een vergelijkbare manier
+          if (loadedData.streakQuests) {
+            const mergedStreakQuests = data.streakQuests.map(defaultStreakQuest => {
+                const loadedStreakQuest = loadedData.streakQuests.find(lsq => lsq.id === defaultStreakQuest.id);
+                return loadedStreakQuest ? { ...defaultStreakQuest, ...loadedStreakQuest } : defaultStreakQuest;
+            });
+            loadedData.streakQuests.forEach(loadedStreakQuest => {
+                if (!mergedStreakQuests.some(msq => msq.id === loadedStreakQuest.id)) {
+                    mergedStreakQuests.push(loadedStreakQuest);
+                }
+            });
+            data.streakQuests = mergedStreakQuests;
+          }
+
+          // NIEUW: Voor dailyStreaks tracking, zorg dat het object correct is
+          if (!data.dailyStreaks) {
+              data.dailyStreaks = {
+                  'brush_teeth_daily': { current: 0, lastCompletionDate: null },
+                  'take_meds_daily': { current: 0, lastCompletionDate: null }
+              };
+          } else {
+              // Zorg dat elke verwachte streak key bestaat
+              if (!data.dailyStreaks['brush_teeth_daily']) data.dailyStreaks['brush_teeth_daily'] = { current: 0, lastCompletionDate: null };
+              if (!data.dailyStreaks['take_meds_daily']) data.dailyStreaks['take_meds_daily'] = { current: 0, lastCompletionDate: null };
+          }
+
+
+          console.log("Progress successfully loaded!");
+          performDailyAndSpecialResets(); // Voer resets uit na het laden
+          updateUI(); // Werk de UI bij
+        } catch (error) {
+          alert("Error loading progress: Invalid file or data format. Please select a valid .json file.");
+          console.error("Loading error:", error);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    }
+
+    // --- Reset Functies ---
+
+    function checkDailyReset() {
+      const today = new Date().toDateString();
+      if (data.lastDailyReset !== today) {
+        // Reset alle daily quests naar onvoltooid
+        data.dailyQuests.forEach(q => q.done = false);
+        data.lastDailyReset = today;
+        
+        // NIEUW: Reset/update streaks voor elke dagelijkse taak die de vorige dag NIET is voltooid
+        // Deze logica moet controleren op 'gap' in dagen
+        for (const key in data.dailyStreaks) {
+            const streak = data.dailyStreaks[key];
+            if (streak.lastCompletionDate) {
+                const lastDate = new Date(streak.lastCompletionDate);
+                const currentDate = new Date(today);
+                const diffTime = currentDate.getTime() - lastDate.getTime();
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays > 1) { // Als er meer dan 1 dag tussen zit, streak is verbroken
+                    streak.current = 0; // Reset de streak
+                    console.log(`Streak for ${key} broken. Reset to 0.`);
+                }
+                // Als diffDays = 1, dan is het de volgende dag en moet de streak doorgaan (wordt verhoogd bij completion)
+                // Als diffDays = 0, dan is het nog dezelfde dag, niets doen
+            } else {
+                streak.current = 0; // Als er nog geen datum is, start op 0
+            }
+        }
+        console.log("Daily quests have been reset to undone!");
+      }
+    }
+
+    function resetSpecials() {
+      const today = new Date();
+      const lastSpecialResetDate = new Date(data.lastSpecialReset);
+
+      const diffTime = Math.abs(today.getTime() - lastSpecialResetDate.getTime());
+      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays >= 3 || data.activeSpecials.length === 0) {
+        data.activeSpecials = [];
+        const availableQuests = [...data.allSpecialQuests];
+        for (let i = availableQuests.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [availableQuests[i], availableQuests[j]] = [availableQuests[j], availableQuests[i]];
+        }
+
+        for (let i = 0; i < 5; i++) {
+          if (availableQuests.length === 0) break;
+          const newQuest = { ...availableQuests.shift(), daysLeft: 3, done: false };
+          data.activeSpecials.push(newQuest);
+        }
+
+        data.lastSpecialReset = today.toDateString();
+        console.log("Special quests have been fully reset and 5 new ones selected!");
+
+      } else if (diffDays > 0) {
+        data.activeSpecials.forEach(q => {
+          if (!q.done && q.daysLeft > 0) {
+            q.daysLeft -= diffDays;
+          }
+        });
+        data.activeSpecials = data.activeSpecials.filter(q => q.daysLeft > 0 || q.done);
+        console.log(`Special quests days left decremented by ${diffDays} day(s).`);
+      }
+    }
+
+    function performDailyAndSpecialResets() {
+      checkDailyReset();
+      resetSpecials();
+    }
+
+    // --- Initialisatie ---
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById("rank").textContent = ranks[data.rank];
+        performDailyAndSpecialResets();
+        updateUI();
+        showPage('status');
+    });
+  </script>
+</body>
+</html>
