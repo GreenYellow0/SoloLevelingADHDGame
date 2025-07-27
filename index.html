@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,6 +76,7 @@
     }
     ul { list-style: none; padding: 0; }
     li {
+      /* Algemene lijst item styling, zal overschreven worden door .weapon-card of .item-card */
       background: #2a2a3a;
       padding: 10px;
       border-radius: 8px;
@@ -179,6 +179,77 @@
       cursor: pointer;
       font-size: 1em; /* Zorg voor leesbare tekst op knoppen */
     }
+
+    /* Styles voor WAPEN KAARTJES */
+    .weapon-card, .item-card { /* Nieuwe .item-card class */
+        background: #2a2a3a; /* Achtergrond zoals andere lijst-items */
+        border: 1px solid #333; /* Dunne rand */
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex; /* Gebruik flexbox voor lay-out binnen de kaart */
+        flex-direction: column; /* Stapel items verticaal */
+        align-items: center; /* Centreer horizontaal */
+        text-align: center;
+        max-width: 180px; /* Max breedte van een kaartje, pas aan indien nodig */
+        min-width: 150px; /* Min breedte */
+        flex-grow: 1; /* Zorgt dat het kan groeien in een flex container */
+        box-sizing: border-box; /* Padding en border binnen de breedte */
+    }
+
+    .weapon-card-list { /* Container voor de wapen/item kaartjes */
+        display: flex;
+        flex-wrap: wrap; /* Laat de kaartjes omvouwen naar de volgende rij */
+        gap: 20px; /* Ruimte tussen de kaartjes */
+        justify-content: center; /* Centreer de kaartjes in de container */
+        padding: 0; /* Verwijder standaard padding van UL */
+        list-style: none; /* Verwijder list-style van UL */
+    }
+
+    .weapon-item-icon, .item-icon { /* Nieuwe .item-icon class */
+        width: 80px; /* Groter icoon voor het kaartje */
+        height: 80px;
+        margin-bottom: 10px; /* Ruimte onder het icoon */
+        image-rendering: crisp-edges; /* Zorgt dat pixel art er scherp uitziet */
+        image-rendering: -webkit-crisp-edges; /* Voor Safari */
+    }
+
+    .weapon-card-name, .item-card-name {
+        font-size: 1.1em;
+        font-weight: bold;
+        color: var(--accent);
+        margin-bottom: 5px;
+    }
+
+    .weapon-card-rank, .item-card-cost-display { /* Nieuwe .item-card-cost-display */
+        font-size: 0.9em;
+        color: var(--highlight);
+        margin-bottom: 5px;
+    }
+
+    .weapon-card-ability, .item-card-effect { /* Nieuwe .item-card-effect */
+        font-size: 0.8em;
+        color: var(--text);
+        font-style: italic;
+        margin-bottom: 10px;
+        min-height: 2.4em; /* Zorgt voor consistente hoogte, zelfs bij korte tekst */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .weapon-card button, .item-card button { /* Stijl de knop binnen het kaartje */
+        background: var(--highlight);
+        color: #000;
+        border: none;
+        padding: 8px 12px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 0.9em;
+        width: 100%; /* Knop vult de breedte van het kaartje */
+    }
   </style>
 </head>
 <body>
@@ -189,7 +260,9 @@
     <button onclick="showPage('status')">Status</button>
     <button onclick="showPage('quests')">Quests</button>
     <button onclick="showPage('shop')">Shop</button>
-    <button onclick="showPage('generalInfo')">Info</button> <button onclick="saveProgress()">Save Progress</button>
+    <button onclick="showPage('inventory')">Inventory</button>
+    <button onclick="showPage('generalInfo')">Info</button>
+    <button onclick="saveProgress()">Save Progress</button>
     <input type="file" onchange="loadProgress(event)">
   </div>
 
@@ -198,7 +271,9 @@
     <div class="panel">
       <p><strong>Level:</strong> <span id="level">1</span></p>
       <p><strong>Points:</strong> <span id="points">0</span></p>
-      <p><strong>Gold:</strong> <span id="gold">0</span></p> <p><strong>Current Rank:</strong> <span id="rank">F</span></p>
+      <p><strong>Gold:</strong> <span id="gold">0</span></p>
+      <p><strong>Silver:</strong> <span id="silver">0</span></p>
+      <p><strong>Current Rank:</strong> <span id="rank">F</span></p>
       <p><strong>Available Ranks:</strong> F, E, D, C, B, A, S, S+, S++</p>
     </div>
   </div>
@@ -208,16 +283,18 @@
     <ul id="dailyList"></ul>
     <h2>Special Quests</h2>
     <ul id="specialList"></ul>
-    <h2>Streak Challenges</h2> <ul id="streakList"></ul>
+    <h2>Streak Challenges</h2>
+    <ul id="streakList"></ul>
   </div>
 
   <div id="shop" class="section">
     <h2>Shop</h2>
-    <div class="panel shop-menu active"> <p>You have <strong><span id="shopPoints">0</span> points</strong> and <strong><span id="shopGold">0</span> Gold</strong>.</p>
+    <div class="panel shop-menu active">
+      <p>You have <strong><span id="shopPoints">0</span> points</strong>, <strong><span id="shopGold">0</span> Gold</strong>, and <strong><span id="shopSilver">0</span> Silver</strong>.</p>
       <button onclick="showShopPage('rankUpgrades')">Rank Upgrades</button>
-      <button onclick="showShopPage('currencyExchange')">Currency Exchange</button>
-      <button onclick="showShopPage('realLifeRewards')">Real-Life Rewards</button>
-      </div>
+      <button onclick="showShopPage('itemShop')">Item Shop</button> <button onclick="showShopPage('realLifeRewards')">Real-Life Rewards</button>
+      <button onclick="showShopPage('weaponShop')">Weapon Shop</button>
+    </div>
 
     <div id="rankUpgrades" class="panel shop-submenu">
       <h3>Rank Upgrades</h3>
@@ -226,13 +303,10 @@
       <button onclick="showShopPage('mainShop')">Back to Shop</button>
     </div>
 
-    <div id="currencyExchange" class="panel shop-submenu">
-      <h3>Currency Exchange</h3>
-      <p>Convert your Points into Gold for special rewards!</p>
-      <div class="shop-item">
-        <span>100 Points = 1 Gold</span>
-        <button onclick="convertPointsToGold()">Convert</button>
-      </div>
+    <div id="itemShop" class="panel shop-submenu">
+      <h3>Item Shop</h3>
+      <p>Purchase various items to aid your journey!</p>
+      <ul id="itemList" class="weapon-card-list"> </ul>
       <button onclick="showShopPage('mainShop')">Back to Shop</button>
     </div>
 
@@ -243,7 +317,23 @@
         </ul>
       <button onclick="showShopPage('mainShop')">Back to Shop</button>
     </div>
+
+    <div id="weaponShop" class="panel shop-submenu">
+      <h3>Weapon Shop</h3>
+      <p>Acquire powerful weapons to aid your journey!</p>
+      <ul id="weaponList" class="weapon-card-list"> </ul>
+      <button onclick="showShopPage('mainShop')">Back to Shop</button>
+    </div>
   </div>
+
+  <div id="inventory" class="section">
+    <h2>Inventory</h2>
+    <div class="panel">
+      <p>Your current arsenal:</p>
+      <ul id="inventoryList" class="weapon-card-list"> </ul>
+    </div>
+  </div>
+
 
   <div id="generalInfo" class="section">
     <h2>Game Information & Progression Guide</h2>
@@ -293,12 +383,27 @@
                 </tbody>
         </table>
 
-        <h3>Currency: Points & Gold</h3>
+        <h3>Currency: Points, Silver & Gold</h3>
         <ul>
-            <li><strong>Points:</strong> Earned from all quests. Primarily used to upgrade your Rank.</li>
-            <li><strong>Gold:</strong> A rare currency earned specifically from completing **Streak Challenges**. Gold is used to purchase valuable **Real-Life Rewards** in the shop.</li>
+            <li><strong>Points:</strong> Earned from all quests. Primarily used to upgrade your Rank, or can be used to purchase **Items** in the Item Shop.</li> <li><strong>Silver:</strong> A common currency used to purchase certain items, especially weapons for lower ranks (F-C) and some special **Items**. You can earn Silver by purchasing specific Items with Points.</li> <li><strong>Gold:</strong> A rare currency earned specifically from completing **Streak Challenges**. Gold is used to purchase valuable **Real-Life Rewards** and advanced weapons for higher ranks (B-S++). You can also earn Gold by purchasing specific Items with Points or Silver.</li> </ul>
+        
+        <h3>Item Shop: Strategic Purchases!</h3> <p>The Item Shop offers unique purchases that provide immediate benefits or help you convert lower-value currency into higher-value currency. These items are consumed upon purchase and do not appear in your Inventory.</p>
+        <p>Current items available:</p>
+        <ul>
+            <li><strong>Diamond Item:</strong> Spend 100 Points to instantly gain 1 Gold. (Repeatable)</li>
+            <li><strong>Mana Crystal:</strong> Spend 10 Points to instantly gain 50 Silver. (Repeatable)</li>
+            <li><strong>Advanced Mana Crystal:</strong> Spend 1000 Silver to instantly gain 250 XP. (Repeatable)</li>
         </ul>
-        <p>You can also **convert Points to Gold** in the shop at a rate of 100 Points = 1 Gold, offering an alternative way to acquire this precious currency.</p>
+        <p>Strategically use these items to manage your resources and accelerate your progress!</p>
+
+        <h3>Weapons: Enhance Your Collection!</h3>
+        <p>Weapons are collectible items that you can purchase from the Weapon Shop using Silver or Gold. Each weapon is associated with a specific Rank. You must achieve that Rank before you can purchase the weapon. Collecting all weapons will grant you a significant bonus reward!</p>
+        <p><strong>Weapon Costs and Requirements:</strong></p>
+        <ul>
+            <li>Weapons for **F-Rank through C-Rank** are purchased using **Silver**.</li>
+            <li>Weapons for **B-Rank through S++-Rank** are purchased using **Gold**.</li>
+        </ul>
+        <p>Upon collecting **all** weapons, you will receive a grand bonus of <strong>2000 XP, 500 Points, 100 Gold, and 2000 Silver!</strong></p>
     </div>
     <button onclick="showPage('status')">Back to Status</button>
   </div>
@@ -337,20 +442,23 @@
         29   // S++-Rank vereist Level 29
     ];
 
-    let data = {
+    // De standaard (hardcoded) staat van de app als er geen save-bestand is geladen
+    // of als nieuwe velden moeten worden geïnitialiseerd.
+    const defaultData = {
       level: 1,
       xp: 0,
       points: 0,
       gold: 0,
+      silver: 0, // NIEUW: Zilver valuta
       rank: 0,
       dailyQuests: [
         { id: 'brush_teeth_1', text: "Brush teeth (morning)", xp: 10, points: 2, done: false },
         { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
         { id: 'take_meds', text: "Take meds (in less than 10 min)", xp: 15, points: 3, done: false },
-        { id: 'limit_pmo', text: "Stay under 1.5h PMO total today", xp: 25, points: 10, done: false },
-        { id: 'fresh_air', text: "Get fresh air (5 min outside or near window)", xp: 10, points: 3, done: false },
-        { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 3, done: false },
-        { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 4, done: false }
+        { id: 'limit_pmo', text: "Stay under 1.5h PMO total today", xp: 25, points: 10, done: false }, 
+        { id: 'fresh_air', text: "Get fresh air (5 min outside or near window)", xp: 10, points: 3, done: false }, 
+        { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 3, done: false }, 
+        { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 4, done: false } 
       ],
       allSpecialQuests: [
         { text: "Clean desk", xp: 80, points: 20 },
@@ -386,8 +494,70 @@
         { id: 'meds_7_days', parentQuestId: 'take_meds_daily', threshold: 7, text: "Took meds 1 week in a row", xp: 600, points: 120, gold: 8, done: false },
         { id: 'meds_14_days', parentQuestId: 'take_meds_daily', threshold: 14, text: "Took meds 2 weeks in a row", xp: 1200, points: 240, gold: 15, done: false },
         { id: 'meds_30_days', parentQuestId: 'take_meds_daily', threshold: 30, text: "Took meds 1 month in a row", xp: 3000, points: 600, gold: 30, done: false }
-      ]
+      ],
+      shopWeapons: [
+          { 
+            id: 'wooden_sword', name: "Wooden Sword", cost: 50, currency: "silver", requiredRank: 0, // F-rank (index 0)
+            icon: 'images/weapon_wood_sword_icon.png', 
+            image: 'images/weapon_wood_sword_large.png', 
+            ability: "A simple sword. Use it wisely."
+          },
+          { 
+            id: 'stone_dagger', name: "Stone Dagger", cost: 100, currency: "silver", requiredRank: 1, // E-rank (index 1)
+            icon: 'images/weapon_stone_dagger_icon.png', 
+            image: 'images/weapon_stone_dagger_large.png', 
+            ability: "A rough blade. Good for quick work."
+          },
+          { 
+            id: 'copper_spear', name: "Copper Spear", cost: 200, currency: "silver", requiredRank: 2, // D-rank (index 2)
+            icon: 'images/weapon_copper_spear_icon.png', 
+            image: 'images/weapon_copper_spear_large.png', 
+            ability: "A basic spear. Offers decent reach."
+          },
+          { 
+            id: 'iron_axe', name: "Iron Axe", cost: 400, currency: "silver", requiredRank: 3, // C-rank (index 3)
+            icon: 'images/weapon_iron_axe_icon.png', 
+            image: 'images/weapon_iron_axe_large.png', 
+            ability: "A sturdy axe. Great for chopping tasks."
+          },
+          { 
+            id: 'steel_sword', name: "Steel Sword", cost: 5, currency: "gold", requiredRank: 4, // B-rank (index 4)
+            icon: 'images/weapon_steel_sword_icon.png', 
+            image: 'images/weapon_steel_sword_large.png', 
+            ability: "A balanced sword. A true adventurer's companion."
+          },
+          { 
+            id: 'silver_bow', name: "Silver Bow", cost: 10, currency: "gold", requiredRank: 5, // A-rank (index 5)
+            icon: 'images/weapon_silver_bow_icon.png', 
+            image: 'images/weapon_silver_bow_large.png', 
+            ability: "An elegant bow. For precise strikes."
+          },
+          { 
+            id: 'mythril_staff', name: "Mythril Staff", cost: 20, currency: "gold", requiredRank: 6, // S-rank (index 6)
+            icon: 'images/weapon_mythril_staff_icon.png', 
+            image: 'images/weapon_mythril_staff_large.png', 
+            ability: "A magical staff. Channels inner power."
+          },
+          { 
+            id: 'dragon_blade', name: "Dragon Blade", cost: 40, currency: "gold", requiredRank: 7, // S+-rank (index 7)
+            icon: 'images/weapon_dragon_blade_icon.png', 
+            image: 'images/weapon_dragon_blade_large.png', 
+            ability: "Forged from dragon scales. The ultimate challenge awaits!"
+          }
+      ],
+      // NIEUWE ITEMS DATA
+      shopItems: [
+        { id: 'diamond_item', name: "Diamond Item", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'Diament.png', ability: "Converts 100 Points into 1 Gold." },
+        { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'ManaCrystal.png', ability: "Converts 10 Points into 50 Silver." },
+        { id: 'advanced_mana_crystal', name: "Advanced Mana Crystal", cost: 1000, currency: "silver", rewardType: "xp", rewardAmount: 250, icon: 'AdvancedManaCrystal.png', ability: "Converts 1000 Silver into 250 XP." }
+      ],
+      ownedWeapons: [], 
+      weaponCollectionCompleted: false 
     };
+
+    // Het actuele data object dat tijdens de sessie wordt gebruikt.
+    // Dit wordt geïnitialiseerd met de default data en dan overschreven/gemerged bij laden.
+    let data = { ...defaultData }; // Start met een kopie van de default data
 
     let currentQuestType = null;
     let currentQuestIndex = null;
@@ -397,9 +567,11 @@
     function updateUI() {
       document.getElementById("level").textContent = data.level;
       document.getElementById("points").textContent = data.points;
-      document.getElementById("gold").textContent = data.gold; // Update Gold display in Status
+      document.getElementById("gold").textContent = data.gold;
+      document.getElementById("silver").textContent = data.silver;
       document.getElementById("shopPoints").textContent = data.points;
-      document.getElementById("shopGold").textContent = data.gold; // Update Gold display in Shop
+      document.getElementById("shopGold").textContent = data.gold;
+      document.getElementById("shopSilver").textContent = data.silver;
       document.getElementById("rank").textContent = ranks[data.rank];
 
       let xpNeeded = data.level * 200;
@@ -462,7 +634,10 @@
 
       // Update Shop lijsten
       updateRankUpgradeList();
+      updateItemShopList(); // NIEUW: Update Item Shop lijst
       updateRealLifeRewardsList();
+      updateWeaponShopList(); // Update wapenshop lijst
+      updateInventoryList(); // Update inventaris lijst
 
       // Update Info Table (for Rank Upgrades) - Zorgt dat de tabel in Info gevuld is als Info actief is
       updateRankUpgradeInfoTable();
@@ -472,7 +647,6 @@
       const list = type === "daily" ? data.dailyQuests : data.activeSpecials;
       const q = list[index];
 
-      // Voorkom openen als al gedaan of verlopen
       if (q.done || (type === "special" && q.daysLeft <= 0)) {
         return;
       }
@@ -482,13 +656,11 @@
       document.getElementById("modalText").textContent = `Did you complete: ${q.text}?`;
       
       const questModal = document.getElementById("questModal");
-      // Voeg nu de 'active' klasse toe om de modal zichtbaar te maken via CSS
       questModal.classList.add('active'); 
     }
 
     function confirmQuest(yes) {
       const questModal = document.getElementById("questModal");
-      // Verwijder de 'active' klasse om de modal te verbergen via CSS
       questModal.classList.remove('active'); 
 
       if (yes) {
@@ -521,21 +693,20 @@
       }
     }
 
-    // Functie om de hoofd-navigatiepagina's te tonen
     function showPage(id) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      // Wanneer je naar de shop navigeert, zorg dat de hoofd-shop pagina actief is
       if (id === 'shop') {
           showShopPage('mainShop');
       }
-      // Wanneer je naar Info navigeert, zorg dat de Info tabel wordt bijgewerkt
       if (id === 'generalInfo') {
           updateRankUpgradeInfoTable();
       }
+      if (id === 'inventory') { // Wanneer naar inventaris genavigeerd
+          updateInventoryList(); // Zorg dat de inventarislijst wordt bijgewerkt
+      }
     }
 
-    // Functie om te navigeren binnen de shop subpagina's
     function showShopPage(id) {
         document.querySelectorAll('.shop-menu, .shop-submenu').forEach(sec => sec.classList.remove('active'));
         if (id === 'mainShop') {
@@ -620,20 +791,6 @@
         }
     }
 
-    function convertPointsToGold() {
-        const pointsToConvert = 100;
-        const goldToGain = 1;
-
-        if (data.points >= pointsToConvert) {
-            data.points -= pointsToConvert;
-            data.gold += goldToGain;
-            alert(`You converted ${pointsToConvert} Points into ${goldToGain} Gold!`);
-            updateUI();
-        } else {
-            alert(`You need at least ${pointsToConvert} Points to convert to Gold.`);
-        }
-    }
-
     function updateRealLifeRewardsList() {
         const rewardsList = document.getElementById("realLifeRewardsList");
         rewardsList.innerHTML = "";
@@ -672,12 +829,222 @@
         }
     }
 
+    // --- NIEUW: Item Shop Logica ---
+    function updateItemShopList() {
+        const itemList = document.getElementById("itemList");
+        itemList.innerHTML = "";
+
+        defaultData.shopItems.forEach(item => {
+            const li = document.createElement("li");
+            li.classList.add('item-card'); // Toepassen van de kaart-styling class
+
+            let costText = `${item.cost} ${item.currency}`;
+            let rewardText = `Get: ${item.rewardAmount} ${item.rewardType.toUpperCase()}`; // Bijv. Get: 1 GOLD of Get: 250 XP
+            
+            li.innerHTML = `
+                <img src="${item.icon}" alt="${item.name} icon" class="item-icon">
+                <span class="item-card-name">${item.name}</span>
+                <span class="item-card-cost-display">Cost: ${costText}</span>
+                <span class="item-card-effect">${item.ability || rewardText}</span> `;
+
+            const buyButton = document.createElement("button");
+            buyButton.textContent = "Buy";
+            
+            // Controleer of de speler genoeg valuta heeft
+            let hasEnoughCurrency = false;
+            if (item.currency === "points") {
+                hasEnoughCurrency = data.points >= item.cost;
+            } else if (item.currency === "silver") {
+                hasEnoughCurrency = data.silver >= item.cost;
+            } else if (item.currency === "gold") {
+                hasEnoughCurrency = data.gold >= item.cost;
+            }
+
+            buyButton.disabled = !hasEnoughCurrency; // Knop uitgeschakeld indien geen valuta
+            buyButton.onclick = () => buyItem(item.id); // Roep buyItem functie aan
+            
+            li.appendChild(buyButton);
+            itemList.appendChild(li);
+        });
+    }
+
+    function buyItem(itemId) {
+        const item = defaultData.shopItems.find(i => i.id === itemId);
+
+        if (!item) {
+            alert("This item is not available.");
+            return;
+        }
+
+        // Valuta checks
+        let hasEnoughCurrency = false;
+        if (item.currency === "points") {
+            hasEnoughCurrency = data.points >= item.cost;
+        } else if (item.currency === "silver") {
+            hasEnoughCurrency = data.silver >= item.cost;
+        } else if (item.currency === "gold") {
+            hasEnoughCurrency = data.gold >= item.cost;
+        }
+
+        if (!hasEnoughCurrency) {
+            alert(`Not enough ${item.currency}! You need ${item.cost} ${item.currency} to buy the ${item.name}.`);
+            return;
+        }
+
+        // Koop het item
+        if (item.currency === "points") {
+            data.points -= item.cost;
+        } else if (item.currency === "silver") {
+            data.silver -= item.cost;
+        } else if (item.currency === "gold") {
+            data.gold -= item.cost;
+        }
+
+        // Beloning van item
+        if (item.rewardType === "xp") {
+            data.xp += item.rewardAmount;
+            checkLevelUp(); // Check for level up immediately
+        } else if (item.rewardType === "points") {
+            data.points += item.rewardAmount;
+        } else if (item.rewardType === "gold") {
+            data.gold += item.rewardAmount;
+        } else if (item.rewardType === "silver") {
+            data.silver += item.rewardAmount;
+        }
+        
+        alert(`You bought the ${item.name}! You received ${item.rewardAmount} ${item.rewardType.toUpperCase()}!`);
+        updateUI();
+    }
+
+
+    // --- Weapon Shop Logica ---
+
+    function updateWeaponShopList() {
+        const weaponList = document.getElementById("weaponList");
+        weaponList.innerHTML = "";
+
+        defaultData.shopWeapons.forEach(weapon => { // Gebruik defaultData.shopWeapons voor de volledige lijst
+            const li = document.createElement("li");
+            li.classList.add('weapon-card'); // Toepassen van de kaart-styling class
+            const alreadyOwned = data.ownedWeapons.includes(weapon.id); // Controleer of al in bezit
+
+            let costText = `${weapon.cost} ${weapon.currency}`;
+            
+            li.innerHTML = `
+                <img src="${weapon.icon}" alt="${weapon.name} icon" class="weapon-item-icon">
+                <span class="weapon-card-name">${weapon.name}</span>
+                <span class="weapon-card-rank">Rank: ${ranks[weapon.requiredRank]}</span>
+                <span class="weapon-card-cost">Cost: ${costText}</span>
+                <span class="weapon-card-ability">${weapon.ability}</span>
+            `;
+
+            const buyButton = document.createElement("button");
+            if (alreadyOwned) {
+                buyButton.textContent = "Owned";
+                buyButton.disabled = true;
+                li.classList.add('done'); // Markeer als bezit
+            } else {
+                buyButton.textContent = "Buy";
+                // Bepaal of de speler genoeg valuta heeft EN de vereiste rank heeft
+                const hasEnoughCurrency = (weapon.currency === "silver" && data.silver >= weapon.cost) ||
+                                          (weapon.currency === "gold" && data.gold >= weapon.cost);
+                const hasRequiredRank = data.rank >= weapon.requiredRank;
+
+                buyButton.disabled = !hasEnoughCurrency || !hasRequiredRank; // Knop uitgeschakeld indien geen valuta of rank
+                buyButton.onclick = () => buyWeapon(weapon.id); // Roep buyWeapon functie aan
+            }
+            li.appendChild(buyButton);
+            weaponList.appendChild(li);
+        });
+    }
+
+    function buyWeapon(weaponId) {
+        const weapon = defaultData.shopWeapons.find(w => w.id === weaponId); // Gebruik defaultData om basis info te krijgen
+        const alreadyOwned = data.ownedWeapons.includes(weaponId);
+
+        if (!weapon || alreadyOwned) {
+            alert("This weapon is not available or already owned.");
+            return;
+        }
+
+        // Valuta en rank checks
+        const hasEnoughCurrency = (weapon.currency === "silver" && data.silver >= weapon.cost) ||
+                                  (weapon.currency === "gold" && data.gold >= weapon.cost);
+        const hasRequiredRank = data.rank >= weapon.requiredRank;
+
+        if (!hasRequiredRank) {
+            alert(`You need to be Rank ${ranks[weapon.requiredRank]} or higher to buy the ${weapon.name}.`);
+            return;
+        }
+
+        if (!hasEnoughCurrency) {
+            alert(`Not enough ${weapon.currency}! You need ${weapon.cost} ${weapon.currency} to buy the ${weapon.name}.`);
+            return;
+        }
+
+        // Koop het wapen
+        if (weapon.currency === "silver") {
+            data.silver -= weapon.cost;
+        } else { // gold
+            data.gold -= weapon.cost;
+        }
+        data.ownedWeapons.push(weapon.id); 
+
+        // Beloningen bij aankoop zijn nu NIET voor individuele wapens, enkel voor collectie
+        // alert(`You bought the ${weapon.name}!`); // Alleen koopbevestiging
+
+        // Controleer of alle wapens verzameld zijn
+        if (!data.weaponCollectionCompleted && data.ownedWeapons.length === defaultData.shopWeapons.length) { 
+            data.weaponCollectionCompleted = true;
+            const bonusXP = 2000;    // Zoals besproken
+            const bonusPoints = 500; // Zoals besproken
+            const bonusGold = 100;   // Zoals besproken
+            const bonusSilver = 2000; // Zilver bonus
+            data.xp += bonusXP;
+            data.points += bonusPoints;
+            data.gold += bonusGold;
+            data.silver += bonusSilver; 
+            alert(`CONGRATULATIONS! You have collected ALL weapons! You received a grand bonus of ${bonusXP} XP, ${bonusPoints} Points, ${bonusGold} Gold, and ${bonusSilver} Silver!`);
+        } else {
+             alert(`You bought the ${weapon.name}!`); // Melding ook als collectie niet compleet is
+        }
+
+        checkLevelUp();
+        updateUI();
+    }
+
+    // --- Inventaris Logica ---
+
+    function updateInventoryList() {
+        const inventoryList = document.getElementById("inventoryList");
+        inventoryList.innerHTML = "";
+
+        if (data.ownedWeapons.length === 0) {
+            inventoryList.innerHTML = "<li class='panel'>No weapons in your inventory yet. Visit the Weapon Shop!</li>";
+            return;
+        }
+
+        data.ownedWeapons.forEach(weaponId => {
+            const weapon = defaultData.shopWeapons.find(w => w.id === weaponId); 
+            if (weapon) {
+                const li = document.createElement("li");
+                li.classList.add('weapon-card'); 
+                li.innerHTML = `
+                    <img src="${weapon.icon}" alt="${weapon.name} icon" class="weapon-item-icon">
+                    <span class="weapon-card-name">${weapon.name}</span>
+                    <span class="weapon-card-rank">Rank: ${ranks[weapon.requiredRank]}</span>
+                    <span class="weapon-card-ability">${weapon.ability}</span>
+                `;
+                inventoryList.appendChild(li);
+            }
+        });
+    }
+
     // --- Streak Quest Logica ---
 
     function checkStreaks(completedDailyQuestId) {
         const today = new Date().toDateString();
 
-        // Logica voor Brush Teeth Streak (als EEN van de tandenpoets quests is gedaan)
         if (completedDailyQuestId === 'brush_teeth_1' || completedDailyQuestId === 'brush_teeth_2') {
             const brushStreak = data.dailyStreaks['brush_teeth_daily'];
             if (brushStreak.lastCompletionDate !== today) {
@@ -685,12 +1052,10 @@
             }
         }
 
-        // Logica voor Take Meds Streak
         if (completedDailyQuestId === 'take_meds') {
             updateSingleStreak('take_meds_daily', today);
         }
 
-        // Controleer alle streak quests en beloon indien voltooid
         data.streakQuests.forEach(streakQuest => {
             if (!streakQuest.done && data.dailyStreaks[streakQuest.parentQuestId] && data.dailyStreaks[streakQuest.parentQuestId].current >= streakQuest.threshold) {
                 streakQuest.done = true;
@@ -749,52 +1114,75 @@
       reader.onload = (ev) => {
         try {
           const loadedData = JSON.parse(ev.target.result);
-          
-          data = {
-            ...data,
-            ...loadedData
-          };
 
-          if (loadedData.realLifeRewards) {
-              const mergedRewards = data.realLifeRewards.map(defaultReward => {
-                  const loadedReward = loadedData.realLifeRewards.find(lr => lr.id === defaultReward.id);
-                  return loadedReward ? { ...defaultReward, ...loadedReward } : defaultReward;
+          // 1. Maak een NIEUW data object gebaseerd op de actuele (default) structuur.
+          // Dit garandeert dat alle nieuwe velden aanwezig zijn met hun standaardwaarden.
+          let currentSessionData = { ...defaultData }; 
+
+          // 2. Overwrite primitieve waarden en directe kopieën van geladen data
+          currentSessionData.level = loadedData.level !== undefined ? loadedData.level : defaultData.level;
+          currentSessionData.xp = loadedData.xp !== undefined ? loadedData.xp : defaultData.xp;
+          currentSessionData.points = loadedData.points !== undefined ? loadedData.points : defaultData.points;
+          currentSessionData.gold = loadedData.gold !== undefined ? loadedData.gold : defaultData.gold;
+          currentSessionData.silver = loadedData.silver !== undefined ? loadedData.silver : defaultData.silver; 
+          currentSessionData.rank = loadedData.rank !== undefined ? loadedData.rank : defaultData.rank;
+          currentSessionData.lastDailyReset = loadedData.lastDailyReset || defaultData.lastDailyReset;
+          currentSessionData.lastSpecialReset = loadedData.lastSpecialReset || defaultData.lastSpecialReset;
+          currentSessionData.weaponCollectionCompleted = loadedData.weaponCollectionCompleted !== undefined ? loadedData.weaponCollectionCompleted : defaultData.weaponCollectionCompleted;
+          
+          // 3. Functie om arrays met ID's te mergen: behoud defaults, update state van geladen items
+          // En voeg nieuwe items toe die in de geladen data zitten, maar niet in de defaults (voor backwards compatibility)
+          const mergeArrayItems = (defaultArray, loadedArray, idKey = 'id') => {
+              const merged = defaultArray.map(defaultItem => {
+                  const loadedItem = (loadedArray || []).find(li => li[idKey] === defaultItem[idKey]);
+                  return loadedItem ? { ...defaultItem, ...loadedItem } : defaultItem; 
               });
-              loadedData.realLifeRewards.forEach(loadedReward => {
-                  if (!mergedRewards.some(mr => mr.id === loadedReward.id)) {
-                      mergedRewards.push(loadedReward);
+              (loadedArray || []).forEach(loadedItem => { 
+                  if (!merged.some(m => m[idKey] === loadedItem[idKey])) {
+                      merged.push(loadedItem);
                   }
               });
-              data.realLifeRewards = mergedRewards;
+              return merged;
+          };
+
+          currentSessionData.dailyQuests = mergeArrayItems(defaultData.dailyQuests, loadedData.dailyQuests);
+          currentSessionData.realLifeRewards = mergeArrayItems(defaultData.realLifeRewards, loadedData.realLifeRewards);
+          currentSessionData.streakQuests = mergeArrayItems(defaultData.streakQuests, loadedData.streakQuests);
+          currentSessionData.shopWeapons = mergeArrayItems(defaultData.shopWeapons, loadedData.shopWeapons);
+          currentSessionData.shopItems = mergeArrayItems(defaultData.shopItems, loadedData.shopItems); // NIEUW: Merge shopItems
+
+
+          // 4. Speciale afhandeling voor activeSpecials (worden toch gereset/herkozen)
+          currentSessionData.activeSpecials = loadedData.activeSpecials || []; 
+
+          // 5. Speciale afhandeling voor dailyStreaks objecten
+          currentSessionData.dailyStreaks = { ...defaultData.dailyStreaks }; 
+          if (loadedData.dailyStreaks) {
+              for (const key in defaultData.dailyStreaks) { 
+                  if (loadedData.dailyStreaks[key]) {
+                      currentSessionData.dailyStreaks[key] = {
+                          current: loadedData.dailyStreaks[key].current,
+                          lastCompletionDate: loadedData.dailyStreaks[key].lastCompletionDate
+                      };
+                  }
+              }
+              for (const key in loadedData.dailyStreaks) { 
+                  if (!currentSessionData.dailyStreaks[key]) {
+                      currentSessionData.dailyStreaks[key] = loadedData.dailyStreaks[key];
+                  }
+              }
           }
 
-          if (loadedData.streakQuests) {
-            const mergedStreakQuests = data.streakQuests.map(defaultStreakQuest => {
-                const loadedStreakQuest = loadedData.streakQuests.find(lsq => lsq.id === defaultStreakQuest.id);
-                return loadedStreakQuest ? { ...defaultStreakQuest, ...loadedStreakQuest } : defaultStreakQuest;
-            });
-            loadedData.streakQuests.forEach(loadedStreakQuest => {
-                if (!mergedStreakQuests.some(msq => msq.id === loadedStreakQuest.id)) {
-                    mergedStreakQuests.push(loadedStreakQuest);
-                }
-            });
-            data.streakQuests = mergedStreakQuests;
-          }
+          // 6. ownedWeapons kan direct worden overgenomen, want het is een lijst van ID's
+          currentSessionData.ownedWeapons = loadedData.ownedWeapons || [];
 
-          if (!data.dailyStreaks) {
-              data.dailyStreaks = {
-                  'brush_teeth_daily': { current: 0, lastCompletionDate: null },
-                  'take_meds_daily': { current: 0, lastCompletionDate: null }
-              };
-          } else {
-              if (!data.dailyStreaks['brush_teeth_daily']) data.dailyStreaks['brush_teeth_daily'] = { current: 0, lastCompletionDate: null };
-              if (!data.dailyStreaks['take_meds_daily']) data.dailyStreaks['take_meds_daily'] = { current: 0, lastCompletionDate: null };
-          }
 
+          // Overwrite het globale data object met het nieuw samengevoegde object
+          data = currentSessionData;
 
           console.log("Progress successfully loaded!");
-          performDailyAndSpecialResets();
-          updateUI();
+          performDailyAndSpecialResets(); 
+          updateUI(); 
         } catch (error) {
           alert("Error loading progress: Invalid file or data format. Please select a valid .json file.");
           console.error("Loading error:", error);
@@ -806,7 +1194,6 @@
 
     // --- Info Table (Rank Upgrades) Logic ---
     function updateRankUpgradeInfoTable() {
-        // Zorg dat de tabel alleen wordt bijgewerkt als de generalInfo sectie actief is
         const generalInfoSection = document.getElementById("generalInfo");
         if (!generalInfoSection || !generalInfoSection.classList.contains('active')) {
             return;
@@ -816,7 +1203,6 @@
         if (!tableBody) return; 
         tableBody.innerHTML = "";
 
-        // Start from F-rank and go up to S+ (because S++ is max and has no next rank)
         for (let i = 0; i < ranks.length - 1; i++) {
             const currentRank = ranks[i];
             const nextRank = ranks[i + 1];
@@ -905,8 +1291,8 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById("rank").textContent = ranks[data.rank];
         performDailyAndSpecialResets();
-        updateUI(); // Initial UI update after data load and resets
-        showPage('status'); // Toon standaard de statuspagina
+        updateUI(); 
+        showPage('status'); 
     });
   </script>
 </body>
