@@ -281,6 +281,7 @@
   <div id="quests" class="section">
     <h2>Daily Quests</h2>
     <ul id="dailyList"></ul>
+    <h2>Daily Physical Quests</h2> <ul id="dailyPhysicalList"></ul>
     <h2>Special Quests</h2>
     <ul id="specialList"></ul>
     <h2>Streak Challenges</h2>
@@ -292,7 +293,8 @@
     <div class="panel shop-menu active">
       <p>You have <strong><span id="shopPoints">0</span> points</strong>, <strong><span id="shopGold">0</span> Gold</strong>, and <strong><span id="shopSilver">0</span> Silver</strong>.</p>
       <button onclick="showShopPage('rankUpgrades')">Rank Upgrades</button>
-      <button onclick="showShopPage('itemShop')">Item Shop</button> <button onclick="showShopPage('realLifeRewards')">Real-Life Rewards</button>
+      <button onclick="showShopPage('itemShop')">Item Shop</button>
+      <button onclick="showShopPage('realLifeRewards')">Real-Life Rewards</button>
       <button onclick="showShopPage('weaponShop')">Weapon Shop</button>
     </div>
 
@@ -306,7 +308,8 @@
     <div id="itemShop" class="panel shop-submenu">
       <h3>Item Shop</h3>
       <p>Purchase various items to aid your journey!</p>
-      <ul id="itemList" class="weapon-card-list"> </ul>
+      <ul id="itemList" class="weapon-card-list">
+        </ul>
       <button onclick="showShopPage('mainShop')">Back to Shop</button>
     </div>
 
@@ -321,7 +324,8 @@
     <div id="weaponShop" class="panel shop-submenu">
       <h3>Weapon Shop</h3>
       <p>Acquire powerful weapons to aid your journey!</p>
-      <ul id="weaponList" class="weapon-card-list"> </ul>
+      <ul id="weaponList" class="weapon-card-list">
+        </ul>
       <button onclick="showShopPage('mainShop')">Back to Shop</button>
     </div>
   </div>
@@ -330,7 +334,8 @@
     <h2>Inventory</h2>
     <div class="panel">
       <p>Your current arsenal:</p>
-      <ul id="inventoryList" class="weapon-card-list"> </ul>
+      <ul id="inventoryList" class="weapon-card-list">
+        </ul>
     </div>
   </div>
 
@@ -362,7 +367,7 @@
         <p>There are three types of quests, each serving a unique purpose:</p>
         <ul>
             <li><strong>Daily Quests:</strong> These are your essential daily habits (e.g., brushing teeth, taking meds). They offer small amounts of XP and Points, but reset every day at midnight, rewarding consistency.</li>
-            <li><strong>Special Quests:</strong> These are larger, one-time tasks (e.g., cleaning your desk, exercising). They offer substantial XP and Points, but are active for 3 days and refresh every 3 days with new challenges.</li>
+            <li><strong>Daily Physical Quests:</strong> These are specific physical exercises like Yoga or Workouts. They also reset daily and reward consistent physical activity.</li> <li><strong>Special Quests:</strong> These are larger, one-time tasks (e.g., cleaning your desk, exercising). They offer substantial XP and Points, but are active for 3 days and refresh every 3 days with new challenges.</li>
             <li><strong>Streak Challenges:</strong> These are long-term achievements that reward your consistent completion of specific daily quests for a set number of consecutive days (e.g., brushing teeth 7 days in a row). They offer significant XP, Points, and are the primary way to earn **Gold**. Once completed, they cannot be done again.</li>
         </ul>
 
@@ -385,9 +390,13 @@
 
         <h3>Currency: Points, Silver & Gold</h3>
         <ul>
-            <li><strong>Points:</strong> Earned from all quests. Primarily used to upgrade your Rank, or can be used to purchase **Items** in the Item Shop.</li> <li><strong>Silver:</strong> A common currency used to purchase certain items, especially weapons for lower ranks (F-C) and some special **Items**. You can earn Silver by purchasing specific Items with Points.</li> <li><strong>Gold:</strong> A rare currency earned specifically from completing **Streak Challenges**. Gold is used to purchase valuable **Real-Life Rewards** and advanced weapons for higher ranks (B-S++). You can also earn Gold by purchasing specific Items with Points or Silver.</li> </ul>
+            <li><strong>Points:</strong> Earned from all quests. Primarily used to upgrade your Rank, or can be used to purchase **Items** in the Item Shop.</li>
+            <li><strong>Silver:</strong> A common currency used to purchase certain items, especially weapons for lower ranks (F-C) and some special **Items**. You can earn Silver by purchasing specific Items with Points.</li>
+            <li><strong>Gold:</strong> A rare currency earned specifically from completing **Streak Challenges**. Gold is used to purchase valuable **Real-Life Rewards** and advanced weapons for higher ranks (B-S++). You can also earn Gold by purchasing specific Items with Points or Silver.</li>
+        </ul>
         
-        <h3>Item Shop: Strategic Purchases!</h3> <p>The Item Shop offers unique purchases that provide immediate benefits or help you convert lower-value currency into higher-value currency. These items are consumed upon purchase and do not appear in your Inventory.</p>
+        <h3>Item Shop: Strategic Purchases!</h3>
+        <p>The Item Shop offers unique purchases that provide immediate benefits or help you convert lower-value currency into higher-value currency. These items are consumed upon purchase and do not appear in your Inventory.</p>
         <p>Current items available:</p>
         <ul>
             <li><strong>Diamond Item:</strong> Spend 100 Points to instantly gain 1 Gold. (Repeatable)</li>
@@ -457,23 +466,56 @@
         { id: 'take_meds', text: "Take meds (in less than 10 min)", xp: 15, points: 3, done: false },
         { id: 'limit_pmo', text: "Stay under 1.5h PMO total today", xp: 25, points: 10, done: false }, 
         { id: 'fresh_air', text: "Get fresh air (5 min outside or near window)", xp: 10, points: 3, done: false }, 
-        { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 3, done: false }, 
-        { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 4, done: false } 
+        { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 5, done: false }, 
+        { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 5, done: false },
+        { id: 'skin_routine', text: "Skin Routine face/leg", xp: 20, points: 5, done: false },
+
       ],
+      // NIEUW: Dagelijkse Fysieke Quests
+dailyPhysicalQuests: [
+  { text: "Naked Yoga (5 min)", xp: 30, points: 8, done: false },
+  { text: "Naked Yoga (10 min)", xp: 50, points: 12, done: false },
+  { text: "Naked Workout (5 min)", xp: 30, points: 8, done: false },
+  { text: "Quick Morning Stretch (2 min, naked optional)", xp: 15, points: 5, done: false },
+  { text: "Toe Tap (1 min, lying down, naked optional)", xp: 15, points: 5, done: false },
+  { text: "Crunch Kicks (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
+  { text: "Handen achter rug klemmen (1 min, naked optional)", xp: 15, points: 5, done: false },
+  { text: "Omgekeerde Sneeuwengelen (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
+  { text: "Prone Flutter Kicks (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
+  { text: "Optillen Gestrekt Been links/rechts (1 min each, naked optional)", xp: 25, points: 7, done: false },
+  { text: "Crunches buikspieren (1 min, lying down, naked optional)", xp: 25, points: 7, done: false },
+  { text: "Leg In and Outs (1 min, sitting or lying, naked optional)", xp: 20, points: 6, done: false },
+  { text: "Armen Zijwaarts Optillen (1 min, naked optional)", xp: 15, points: 5, done: false },
+  { text: "Arm Circles (1 min, naked optional)", xp: 15, points: 5, done: false },
+  { text: "Butt Bridge (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
+  { text: "Beenslag Achter links/rechts (1 min each, naked optional)", xp: 25, points: 7, done: false },
+  { text: "Standing Dumbbell Curl (1 min, naked optional)", xp: 25, points: 7, done: false },
+  { text: "Crossbody Hammer Curl (1 min, naked optional)", xp: 25, points: 7, done: false },
+  { text: "Geconcentreerde Dumbbell Curl links/rechts (1 min each, seated, naked optional)", xp: 30, points: 8, done: false }
+],
+
       allSpecialQuests: [
-        { text: "Clean desk", xp: 80, points: 20 },
-        { text: "Exercise for 30min", xp: 100, points: 25 },
-        { text: "Learn something new (1hr)", xp: 150, points: 35 },
+        { text: "Spend one day with less than 30 min total PMO", xp: 200, points: 50 },
+        { text: "Exercise for 10min", xp: 120, points: 30 },
+        { text: "Change bed sheets", xp: 120, points: 30 },
         { text: "Organize files", xp: 120, points: 30 },
-        { text: "Cook a healthy meal", xp: 110, points: 28 },
-        { text: "Read a book (30min)", xp: 100, points: 22 },
-        { text: "Practice a hobby", xp: 130, points: 32 },
-        { text: "Deep clean room", xp: 200, points: 50 },
-        { text: "Complete significant project", xp: 300, points: 75 }
+        { text: "Eye Exercise (once)", xp: 120, points: 35 },
+        { text: "Clip nails (hands or feet)", xp: 80, points: 20 },
+        { text: "Use mouthwash (Listerine)", xp: 100, points: 25 },
+        { text: "Spend one day completely without PMO", xp: 400, points: 150 },
+        { text: "Stretch for 5 min straight", xp: 100, points: 30 },
+        { text: "Walk (or move around room) continuously for 5 mins", xp: 120, points: 50 },
+        { text: "Complete short physical therapy or guided workout video (5-10 min)", xp: 130, points: 60 },
+        { text: "Vacuum/sweep bedroom", xp: 150, points: 40 },
+        { text: "Organize one small physical area (desk, shelf, drawer)", xp: 120, points: 30 },
+        { text: "Successfully delay PMO impulse by 1 hour (once)", xp: 175, points: 80 },
+        { text: "Perform gentle (naked) yoga/stretching for 10 mins", xp: 120, points: 35 },
+        { text: "One time sleep at (2AM)", xp: 120, points: 30 }
       ],
       activeSpecials: [],
       lastDailyReset: new Date().toDateString(),
       lastSpecialReset: new Date().toDateString(),
+      lastPhysicalReset: new Date().toDateString(), // NIEUW: Datum voor reset fysieke taken
       realLifeRewards: [
         { id: 'gaming_hour', text: "1 hour of gaming", cost: 10, bought: false },
         { id: 'favorite_meal', text: "Order your favorite meal", cost: 25, bought: false },
@@ -545,11 +587,11 @@
             ability: "Forged from dragon scales. The ultimate challenge awaits!"
           }
       ],
-      // NIEUWE ITEMS DATA
+      // ITEMS DATA
       shopItems: [
-        { id: 'diamond_item', name: "Diamond Item", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'Diament.png', ability: "Converts 100 Points into 1 Gold." },
-        { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'ManaCrystal.png', ability: "Converts 10 Points into 50 Silver." },
-        { id: 'advanced_mana_crystal', name: "Advanced Mana Crystal", cost: 1000, currency: "silver", rewardType: "xp", rewardAmount: 250, icon: 'AdvancedManaCrystal.png', ability: "Converts 1000 Silver into 250 XP." }
+        { id: 'diamond_item', name: "Diamond Item", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'images/item_diamond_icon.png', ability: "Converts 100 Points into 1 Gold." },
+        { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'images/item_mana_crystal_icon.png', ability: "Converts 10 Points into 50 Silver." },
+        { id: 'advanced_mana_crystal', name: "Advanced Mana Crystal", cost: 1000, currency: "silver", rewardType: "xp", rewardAmount: 250, icon: 'images/item_advanced_mana_crystal_icon.png', ability: "Converts 1000 Silver into 250 XP." }
       ],
       ownedWeapons: [], 
       weaponCollectionCompleted: false 
@@ -594,6 +636,20 @@
         dList.appendChild(li);
       });
 
+      // NIEUW: Daily Physical Quests UI
+      const dpList = document.getElementById("dailyPhysicalList");
+      dpList.innerHTML = "";
+      data.dailyPhysicalQuests.forEach((q, i) => {
+        const li = document.createElement("li");
+        li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P)`;
+        if (q.done) {
+          li.classList.add('done');
+        } else {
+          li.onclick = () => openModal("dailyPhysical", i); // Belangrijk: 'dailyPhysical' type
+        }
+        dpList.appendChild(li);
+      });
+
       // Special Quests UI
       const sList = document.getElementById("specialList");
       sList.innerHTML = "";
@@ -634,25 +690,33 @@
 
       // Update Shop lijsten
       updateRankUpgradeList();
-      updateItemShopList(); // NIEUW: Update Item Shop lijst
+      updateItemShopList();
       updateRealLifeRewardsList();
-      updateWeaponShopList(); // Update wapenshop lijst
-      updateInventoryList(); // Update inventaris lijst
+      updateWeaponShopList();
+      updateInventoryList();
 
       // Update Info Table (for Rank Upgrades) - Zorgt dat de tabel in Info gevuld is als Info actief is
       updateRankUpgradeInfoTable();
     }
 
     function openModal(type, index) {
-      const list = type === "daily" ? data.dailyQuests : data.activeSpecials;
-      const q = list[index];
+      currentQuestType = type;
+      currentQuestIndex = index;
+      let q;
+      if (type === "daily") {
+        q = data.dailyQuests[index];
+      } else if (type === "dailyPhysical") { // NIEUW: Daily Physical Quest type
+        q = data.dailyPhysicalQuests[index];
+      } else if (type === "special") {
+        q = data.activeSpecials[index];
+      } else {
+        return; // Onbekend type
+      }
 
       if (q.done || (type === "special" && q.daysLeft <= 0)) {
         return;
       }
 
-      currentQuestType = type;
-      currentQuestIndex = index;
       document.getElementById("modalText").textContent = `Did you complete: ${q.text}?`;
       
       const questModal = document.getElementById("questModal");
@@ -664,7 +728,17 @@
       questModal.classList.remove('active'); 
 
       if (yes) {
-        const list = currentQuestType === "daily" ? data.dailyQuests : data.activeSpecials;
+        let list;
+        if (currentQuestType === "daily") {
+          list = data.dailyQuests;
+        } else if (currentQuestType === "dailyPhysical") { // NIEUW: Daily Physical Quest type
+          list = data.dailyPhysicalQuests;
+        } else if (currentQuestType === "special") {
+          list = data.activeSpecials;
+        } else {
+          return; // Onbekend type
+        }
+
         const q = list[currentQuestIndex];
 
         if (!q.done && !(currentQuestType === "special" && q.daysLeft <= 0)) {
@@ -673,7 +747,7 @@
           data.points += Math.floor(q.points * rankMultiplier[data.rank]);
           checkLevelUp();
           
-          if (currentQuestType === "daily") {
+          if (currentQuestType === "daily") { // Streaks alleen voor 'daily' quests
               checkStreaks(q.id); 
           }
 
@@ -761,59 +835,6 @@
         }
     }
 
-    function buyRankUpgrade(targetRankIndex) {
-        if (data.rank !== targetRankIndex) {
-            alert("You can only upgrade to your next immediate rank.");
-            return;
-        }
-
-        const nextRankIndex = data.rank + 1;
-        if (nextRankIndex >= ranks.length) {
-            alert("You are already at the highest rank!");
-            return;
-        }
-
-        const upgradeCost = getRankUpgradeCost(nextRankIndex);
-        const requiredLevel = rankLevelRequirements[nextRankIndex];
-        const nextRankName = ranks[nextRankIndex];
-
-        if (data.level >= requiredLevel) {
-            if (data.points >= upgradeCost) {
-                data.points -= upgradeCost;
-                data.rank++;
-                alert(`Congratulations! You are now Rank ${nextRankName}!`);
-                updateUI();
-            } else {
-                alert(`Not enough points! You need ${upgradeCost} points to upgrade to Rank ${nextRankName}.`);
-            }
-        } else {
-            alert(`You need to reach Level ${requiredLevel} to upgrade to Rank ${nextRankName}.`);
-        }
-    }
-
-    function updateRealLifeRewardsList() {
-        const rewardsList = document.getElementById("realLifeRewardsList");
-        rewardsList.innerHTML = "";
-
-        data.realLifeRewards.forEach(reward => {
-            const li = document.createElement("li");
-            li.innerHTML = `<span>${reward.text}</span>`;
-
-            const buyButton = document.createElement("button");
-            if (reward.bought) {
-                buyButton.textContent = "Claimed";
-                buyButton.disabled = true;
-                li.classList.add('done');
-            } else {
-                buyButton.textContent = `Buy (${reward.cost} Gold)`;
-                buyButton.disabled = data.gold < reward.cost;
-                buyButton.onclick = () => buyRealLifeReward(reward.id);
-            }
-            li.appendChild(buyButton);
-            rewardsList.appendChild(li);
-        });
-    }
-
     function buyRealLifeReward(rewardId) {
         const reward = data.realLifeRewards.find(r => r.id === rewardId);
 
@@ -829,7 +850,7 @@
         }
     }
 
-    // --- NIEUW: Item Shop Logica ---
+    // --- Item Shop Logica ---
     function updateItemShopList() {
         const itemList = document.getElementById("itemList");
         itemList.innerHTML = "";
@@ -1129,7 +1150,9 @@
           currentSessionData.lastDailyReset = loadedData.lastDailyReset || defaultData.lastDailyReset;
           currentSessionData.lastSpecialReset = loadedData.lastSpecialReset || defaultData.lastSpecialReset;
           currentSessionData.weaponCollectionCompleted = loadedData.weaponCollectionCompleted !== undefined ? loadedData.weaponCollectionCompleted : defaultData.weaponCollectionCompleted;
-          
+          currentSessionData.lastPhysicalReset = loadedData.lastPhysicalReset || defaultData.lastPhysicalReset; // NIEUW: lastPhysicalReset
+
+
           // 3. Functie om arrays met ID's te mergen: behoud defaults, update state van geladen items
           // En voeg nieuwe items toe die in de geladen data zitten, maar niet in de defaults (voor backwards compatibility)
           const mergeArrayItems = (defaultArray, loadedArray, idKey = 'id') => {
@@ -1149,7 +1172,8 @@
           currentSessionData.realLifeRewards = mergeArrayItems(defaultData.realLifeRewards, loadedData.realLifeRewards);
           currentSessionData.streakQuests = mergeArrayItems(defaultData.streakQuests, loadedData.streakQuests);
           currentSessionData.shopWeapons = mergeArrayItems(defaultData.shopWeapons, loadedData.shopWeapons);
-          currentSessionData.shopItems = mergeArrayItems(defaultData.shopItems, loadedData.shopItems); // NIEUW: Merge shopItems
+          currentSessionData.shopItems = mergeArrayItems(defaultData.shopItems, loadedData.shopItems); 
+          currentSessionData.dailyPhysicalQuests = mergeArrayItems(defaultData.dailyPhysicalQuests, loadedData.dailyPhysicalQuests); // NIEUW: Merge dailyPhysicalQuests
 
 
           // 4. Speciale afhandeling voor activeSpecials (worden toch gereset/herkozen)
@@ -1222,27 +1246,35 @@
 
     function checkDailyReset() {
       const today = new Date().toDateString();
+      // Controleer en reset 'dailyQuests'
       if (data.lastDailyReset !== today) {
         data.dailyQuests.forEach(q => q.done = false);
         data.lastDailyReset = today;
-        
-        for (const key in data.dailyStreaks) {
-            const streak = data.dailyStreaks[key];
-            if (streak.lastCompletionDate) {
-                const lastDate = new Date(streak.lastCompletionDate);
-                const currentDate = new Date(today);
-                const diffTime = currentDate.getTime() - lastDate.getTime();
-                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays > 1) {
-                    streak.current = 0;
-                    console.log(`Streak for ${key} broken. Reset to 0.`);
-                }
-            } else {
-                streak.current = 0;
-            }
-        }
         console.log("Daily quests have been reset to undone!");
+      }
+
+      // NIEUW: Controleer en reset 'dailyPhysicalQuests'
+      if (data.lastPhysicalReset !== today) {
+        data.dailyPhysicalQuests.forEach(q => q.done = false);
+        data.lastPhysicalReset = today;
+        console.log("Daily Physical quests have been reset to undone!");
+      }
+        
+      for (const key in data.dailyStreaks) {
+          const streak = data.dailyStreaks[key];
+          if (streak.lastCompletionDate) {
+              const lastDate = new Date(streak.lastCompletionDate);
+              const currentDate = new Date(today);
+              const diffTime = currentDate.getTime() - lastDate.getTime();
+              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+              if (diffDays > 1) {
+                  streak.current = 0;
+                  console.log(`Streak for ${key} broken. Reset to 0.`);
+              }
+          } else {
+              streak.current = 0;
+          }
       }
     }
 
