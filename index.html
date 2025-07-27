@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADHD-SoloLeveling</title>
+  <title>ADHD-SoloLeveling-Motivation</title>
   <style>
     :root {
       --bg: #0a0a0f;
@@ -281,7 +281,8 @@
   <div id="quests" class="section">
     <h2>Daily Quests</h2>
     <ul id="dailyList"></ul>
-    <h2>Daily Physical Quests</h2> <ul id="dailyPhysicalList"></ul>
+    <h2>Daily Physical Quests</h2>
+    <ul id="dailyPhysicalList"></ul>
     <h2>Special Quests</h2>
     <ul id="specialList"></ul>
     <h2>Streak Challenges</h2>
@@ -589,9 +590,9 @@ dailyPhysicalQuests: [
       ],
       // ITEMS DATA
       shopItems: [
-        { id: 'diamond_item', name: "Diamond Item", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'images/item_diamond_icon.png', ability: "Converts 100 Points into 1 Gold." },
-        { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'images/item_mana_crystal_icon.png', ability: "Converts 10 Points into 50 Silver." },
-        { id: 'advanced_mana_crystal', name: "Advanced Mana Crystal", cost: 1000, currency: "silver", rewardType: "xp", rewardAmount: 250, icon: 'images/item_advanced_mana_crystal_icon.png', ability: "Converts 1000 Silver into 250 XP." }
+        { id: 'diamond_item', name: "Diamond", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'Diament.png', ability: "Converts 100 Points into 1 Gold." },
+        { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'ManaCrystal.png', ability: "Converts 10 Points into 50 Silver." },
+        { id: 'advanced_mana_crystal', name: "Advanced Mana Crystal", cost: 1000, currency: "silver", rewardType: "xp", rewardAmount: 250, icon: 'AdvancedManaCrystal.png', ability: "Converts 1000 Silver into 250 XP." }
       ],
       ownedWeapons: [], 
       weaponCollectionCompleted: false 
@@ -1134,11 +1135,11 @@ dailyPhysicalQuests: [
       const reader = new FileReader();
       reader.onload = (ev) => {
         try {
-          const loadedData = JSON.parse(ev.target.result);
-
           // 1. Maak een NIEUW data object gebaseerd op de actuele (default) structuur.
           // Dit garandeert dat alle nieuwe velden aanwezig zijn met hun standaardwaarden.
           let currentSessionData = { ...defaultData }; 
+
+          const loadedData = JSON.parse(ev.target.result);
 
           // 2. Overwrite primitieve waarden en directe kopieën van geladen data
           currentSessionData.level = loadedData.level !== undefined ? loadedData.level : defaultData.level;
@@ -1150,7 +1151,7 @@ dailyPhysicalQuests: [
           currentSessionData.lastDailyReset = loadedData.lastDailyReset || defaultData.lastDailyReset;
           currentSessionData.lastSpecialReset = loadedData.lastSpecialReset || defaultData.lastSpecialReset;
           currentSessionData.weaponCollectionCompleted = loadedData.weaponCollectionCompleted !== undefined ? loadedData.weaponCollectionCompleted : defaultData.weaponCollectionCompleted;
-          currentSessionData.lastPhysicalReset = loadedData.lastPhysicalReset || defaultData.lastPhysicalReset; // NIEUW: lastPhysicalReset
+          currentSessionData.lastPhysicalReset = loadedData.lastPhysicalReset !== undefined ? loadedData.lastPhysicalReset : defaultData.lastPhysicalReset; // Corrected default merge
 
 
           // 3. Functie om arrays met ID's te mergen: behoud defaults, update state van geladen items
@@ -1169,11 +1170,11 @@ dailyPhysicalQuests: [
           };
 
           currentSessionData.dailyQuests = mergeArrayItems(defaultData.dailyQuests, loadedData.dailyQuests);
+          currentSessionData.dailyPhysicalQuests = mergeArrayItems(defaultData.dailyPhysicalQuests, loadedData.dailyPhysicalQuests);
           currentSessionData.realLifeRewards = mergeArrayItems(defaultData.realLifeRewards, loadedData.realLifeRewards);
           currentSessionData.streakQuests = mergeArrayItems(defaultData.streakQuests, loadedData.streakQuests);
           currentSessionData.shopWeapons = mergeArrayItems(defaultData.shopWeapons, loadedData.shopWeapons);
           currentSessionData.shopItems = mergeArrayItems(defaultData.shopItems, loadedData.shopItems); 
-          currentSessionData.dailyPhysicalQuests = mergeArrayItems(defaultData.dailyPhysicalQuests, loadedData.dailyPhysicalQuests); // NIEUW: Merge dailyPhysicalQuests
 
 
           // 4. Speciale afhandeling voor activeSpecials (worden toch gereset/herkozen)
