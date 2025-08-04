@@ -3,253 +3,266 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADHD-SoloLeveling-Motivation</title>
+  <title>Solo Leveling System</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
     :root {
-      --bg: #0a0a0f;
-      --panel: #1e1e2e;
-      --accent: #ffcc00;
-      --highlight: #00d1ff;
-      --text: #f0f0f0;
-      --xp-fill: #00ffcc;
+      --bg-dark: #0A101A;
+      --panel-gradient: linear-gradient(145deg, rgba(27, 34, 48, 0.9), rgba(17, 22, 32, 0.95));
+      --system-blue: #0084ff;
+      --system-blue-light: #69b4ff;
+      --border-color: rgba(0, 132, 255, 0.3);
+      --glow-color: rgba(0, 132, 255, 0.4);
+      --notification-quest: rgba(0, 132, 255, 0.85);
+      --notification-levelup: rgba(255, 215, 0, 0.85);
+      --text-primary: #EAEAEA;
+      --text-secondary: #A0A0B0;
+      --xp-fill: var(--system-blue);
+      --xp-bg: #2A2A3A;
     }
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      background-image: radial-gradient(circle at top left, rgba(0, 132, 255, 0.05), transparent 40%);
+      background-attachment: fixed;
     }
-    .nav, .xp-bar-container {
+
+    h2 {
+      color: var(--text-primary);
+      border-bottom: 2px solid var(--system-blue);
+      padding-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      text-shadow: 0 0 8px rgba(0, 132, 255, 0.3);
+    }
+    h3 {
+      color: var(--system-blue-light);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 5px;
+      margin-top: 30px;
+    }
+
+    /* --- Hoofdlayout & Navigatie --- */
+    .xp-bar-container {
+      padding: 10px 20px;
+      background: rgba(10, 16, 26, 0.8);
+      border-bottom: 1px solid var(--border-color);
+    }
+    .nav {
       display: flex;
       justify-content: center;
-      gap: 20px;
+      gap: 5px;
       padding: 10px;
-      background: var(--panel);
-      align-items: center;
+      background-color: #05080D;
       flex-wrap: wrap;
     }
     .nav button, .nav input[type="file"] {
-      background: var(--highlight);
-      color: #000;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      background: transparent;
+      color: var(--text-secondary);
       border: none;
-      padding: 8px 16px;
-      font-weight: bold;
+      padding: 10px 20px;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 0;
+      transition: all 0.3s ease;
+      position: relative;
     }
-    .section {
-      display: none;
-      max-width: 800px;
-      margin: auto;
-      padding: 20px;
+    .nav button:hover { color: var(--system-blue); }
+    .nav button::after {
+      content: ''; position: absolute; bottom: 0; left: 50%;
+      transform: translateX(-50%); width: 0; height: 2px;
+      background: var(--system-blue); transition: width 0.3s ease;
     }
-    .active {
-      display: block;
-    }
-    h2 {
-      color: var(--accent);
-    }
-    h3 {
-      color: var(--highlight);
-    }
+    .nav button:hover::after { width: 70%; }
+
+    /* --- Secties en Panelen --- */
+    .section { display: none; max-width: 800px; margin: auto; padding: 20px; }
+    .active { display: block; }
+
     .panel, .modal-content {
-      background: var(--panel);
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 15px;
+      background: var(--panel-gradient);
+      backdrop-filter: blur(3px);
+      padding: 25px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+      clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
     }
+
+    /* --- XP Bar --- */
     .xp-bar {
-      flex: 1;
-      background: #333;
-      border-radius: 10px;
-      overflow: hidden;
-      height: 20px;
+      flex: 1; background-color: var(--xp-bg);
+      background-image: linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0.03) 75%, transparent 75%, transparent);
+      background-size: 20px 20px; border-radius: 2px;
+      overflow: hidden; height: 25px; border: 1px solid var(--border-color);
+      padding: 2px; position: relative;
     }
     .xp-fill {
-      height: 100%;
-      background: var(--xp-fill);
-      text-align: right;
-      padding-right: 10px;
-      color: #000;
-      font-weight: bold;
-      transition: width 0.4s ease;
+      height: 100%; background: var(--xp-fill); border-radius: 1px;
+      text-align: right; padding-right: 10px; color: #05080D;
+      font-weight: bold; font-size: 14px; line-height: 21px;
+      transition: width 0.5s ease-in-out; position: relative;
+      box-shadow: inset 0 0 8px rgba(0, 200, 255, 0.7), 0 0 10px var(--glow-color);
+      overflow: hidden;
     }
+    .xp-fill::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 50%;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0));
+      opacity: 0.8;
+    }
+
+    /* --- LIJSTEN (Quests, etc.) --- */
     ul { list-style: none; padding: 0; }
-    li {
-      /* Algemene lijst item styling, zal overschreven worden door .weapon-card of .item-card */
-      background: #2a2a3a;
-      padding: 10px;
-      border-radius: 8px;
-      margin: 8px 0;
-      cursor: pointer;
-      display: flex; /* Flexbox for alignment */
-      justify-content: space-between; /* Space out text and "days left" */
-      align-items: center;
+    .quest-list li {
+      background: rgba(27, 34, 48, 0.4); padding: 15px; margin: 8px 0;
+      cursor: pointer; border-left: 3px solid var(--border-color);
+      display: flex; justify-content: space-between; align-items: center;
+      transition: all 0.2s ease; border-radius: 4px;
     }
-    li.done {
-        opacity: 0.6; /* Indicate completed quests, but keep them visible (optional) */
-        text-decoration: line-through;
-        cursor: default;
+    .quest-list li:hover {
+      background: rgba(0, 132, 255, 0.15);
+      border-left-color: var(--system-blue);
     }
-    .shop-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px; /* Spacing for shop items */
+    .quest-list li.done {
+      opacity: 0.4; text-decoration: line-through; cursor: default;
+      background: transparent; border-left-color: #555;
     }
-    .shop-menu button {
-        background: var(--panel);
-        color: var(--text);
-        border: 1px solid var(--highlight);
-        padding: 8px 16px;
-        font-weight: bold;
+    #active-gates-list li button {
+        background: var(--panel-bg);
+        color: var(--system-blue-light);
+        border: 1px solid var(--border-color);
+        padding: 5px 15px;
+        font-weight: 600;
         cursor: pointer;
-        border-radius: 8px;
-        margin-right: 10px;
+        transition: all 0.2s ease;
+        border-radius: 4px;
     }
-    .shop-submenu {
-        display: none; /* Subpages in shop are hidden by default */
+    #active-gates-list li button:hover {
+        background: var(--system-blue);
+        color: #fff;
     }
-    .shop-submenu.active {
-        display: block;
+
+    /* --- SHOP KNOPPEN (APART VAN GATES) --- */
+    .shop-menu button, .shop-submenu button {
+        font-family: 'Montserrat', sans-serif; background: var(--panel-bg);
+        color: var(--text-primary); border: 1px solid var(--border-color);
+        padding: 10px 20px; font-weight: 600; cursor: pointer;
+        margin: 5px; transition: all 0.2s ease;
     }
-    /* Styles for tables within info section */
-    .info-table {
+    .shop-menu button:hover, .shop-submenu button:hover {
+        background: var(--system-blue); border-color: var(--system-blue); color: #fff;
+    }
+    .shop-submenu { display: none; }
+    .shop-submenu.active { display: block; }
+    
+    /* --- GECORRIGEERDE STIJL VOOR GATE KNOPPEN --- */
+    #gate-selection-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        overflow: hidden;
+        padding: 0;
+    }
+    #gate-selection-container h3 {
         width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        color: var(--text);
+        margin: 15px;
+        border-bottom: none;
     }
-    .info-table th, .info-table td {
-        border: 1px solid #333;
-        padding: 8px;
-        text-align: left;
-    }
-    .info-table th {
-        background-color: #333;
-        color: var(--highlight);
-    }
-    .info-table tr:nth-child(even) {
-        background-color: #2a2a3a;
-    }
-
-    /* Modale stijlen voor de Ja/Nee-pop-up */
-    .modal {
-      display: flex; /* Gebruik flexbox voor centrering wanneer actief, maar start onzichtbaar */
-      position: fixed; /* Zorgt ervoor dat het over de content heen ligt */
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8); /* Semi-transparante overlay */
-      justify-content: center;
-      align-items: center;
-      z-index: 1000; /* Zorg dat de modal bovenop alles ligt */
-
-      /* Belangrijk voor initiële verbergen zonder display: none; conflict */
-      visibility: hidden; /* Start met onzichtbaar */
-      opacity: 0; /* Start met volledig transparant */
-      transition: opacity 0.3s ease, visibility 0.3s ease; /* Zachte overgang */
-    }
-
-    /* De 'active' klasse maakt de modal zichtbaar */
-    .modal.active {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .modal-content {
-      background: var(--panel);
-      padding: 20px; /* Iets meer padding voor betere uitstraling */
-      border-radius: 10px;
-      max-width: 90%; /* Zorgt dat het niet te breed wordt op kleine schermen */
-      width: 400px; /* Een vaste breedte voor consistentie op grotere schermen */
-      box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* Een kleine schaduw */
-      text-align: center; /* Centreer de tekst en knoppen binnen de modal */
-    }
-
-    .modal-content button {
-      margin: 10px;
-      padding: 10px 20px; /* Grotere knoppen */
-      font-weight: bold;
-      background: var(--highlight);
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em; /* Zorg voor leesbare tekst op knoppen */
-    }
-
-    /* Styles voor WAPEN KAARTJES */
-    .weapon-card, .item-card { /* Nieuwe .item-card class */
-        background: #2a2a3a; /* Achtergrond zoals andere lijst-items */
-        border: 1px solid #333; /* Dunne rand */
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 15px;
-        display: flex; /* Gebruik flexbox voor lay-out binnen de kaart */
-        flex-direction: column; /* Stapel items verticaal */
-        align-items: center; /* Centreer horizontaal */
-        text-align: center;
-        max-width: 180px; /* Max breedte van een kaartje, pas aan indien nodig */
-        min-width: 150px; /* Min breedte */
-        flex-grow: 1; /* Zorgt dat het kan groeien in een flex container */
-        box-sizing: border-box; /* Padding en border binnen de breedte */
-    }
-
-    .weapon-card-list { /* Container voor de wapen/item kaartjes */
-        display: flex;
-        flex-wrap: wrap; /* Laat de kaartjes omvouwen naar de volgende rij */
-        gap: 20px; /* Ruimte tussen de kaartjes */
-        justify-content: center; /* Centreer de kaartjes in de container */
-        padding: 0; /* Verwijder standaard padding van UL */
-        list-style: none; /* Verwijder list-style van UL */
-    }
-
-    .weapon-item-icon, .item-icon { /* Nieuwe .item-icon class */
-        width: 80px; /* Groter icoon voor het kaartje */
-        height: 80px;
-        margin-bottom: 10px; /* Ruimte onder het icoon */
-        image-rendering: crisp-edges; /* Zorgt dat pixel art er scherp uitziet */
-        image-rendering: -webkit-crisp-edges; /* Voor Safari */
-    }
-
-    .weapon-card-name, .item-card-name {
-        font-size: 1.1em;
-        font-weight: bold;
-        color: var(--accent);
-        margin-bottom: 5px;
-    }
-
-    .weapon-card-rank, .item-card-cost-display { /* Nieuwe .item-card-cost-display */
-        font-size: 0.9em;
-        color: var(--highlight);
-        margin-bottom: 5px;
-    }
-
-    .weapon-card-ability, .item-card-effect { /* Nieuwe .item-card-effect */
-        font-size: 0.8em;
-        color: var(--text);
-        font-style: italic;
-        margin-bottom: 10px;
-        min-height: 2.4em; /* Zorgt voor consistente hoogte, zelfs bij korte tekst */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-    }
-
-    .weapon-card button, .item-card button { /* Stijl de knop binnen het kaartje */
-        background: var(--highlight);
-        color: #000;
+    #gate-selection-container button {
+        flex-grow: 1;
+        background: transparent;
+        color: var(--text-secondary);
         border: none;
-        padding: 8px 12px;
-        font-weight: bold;
+        border-right: 1px solid var(--border-color);
+        padding: 12px 10px;
+        font-weight: 600;
         cursor: pointer;
-        border-radius: 5px;
-        font-size: 0.9em;
-        width: 100%; /* Knop vult de breedte van het kaartje */
+        transition: all 0.2s ease;
+        border-radius: 0;
+        margin: 0;
     }
+    #gate-selection-container button:last-child {
+        border-right: none;
+    }
+    #gate-selection-container button:hover:not(:disabled) {
+        background: rgba(0, 132, 255, 0.15);
+        color: var(--system-blue-light);
+    }
+    #gate-selection-container button:disabled {
+        color: #444;
+        background: rgba(10, 16, 26, 0.5);
+        cursor: not-allowed;
+    }
+    .gate-timer { font-weight: bold; color: var(--system-blue-light); }
+
+    /* --- STATUS PAGINA --- */
+    .status-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 20px; text-align: center; }
+    .status-main-stats { grid-column: 1 / -1; display: flex; justify-content: space-around; align-items: center; padding: 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
+    .status-main-stats .stat-block { display: flex; flex-direction: column; }
+    .status-main-stats .stat-label { font-size: 1.2em; color: var(--text-secondary); text-transform: uppercase; }
+    .status-main-stats .stat-value { font-size: 4em; font-weight: 700; color: #fff; text-shadow: 0 0 10px var(--glow-color); }
+    .status-secondary-stats { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; }
+    .status-secondary-stats .stat-block { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 4px; border: 1px solid var(--border-color); }
+    .status-secondary-stats .stat-label { font-size: 1em; color: var(--text-secondary); }
+    .status-secondary-stats .stat-value { font-size: 1.8em; color: var(--system-blue-light); font-weight: 600; }
+    .ranks-info { grid-column: 1 / -1; font-size: 0.9em; color: var(--text-secondary); margin-top: 10px; }
+
+    /* --- Tabellen (Info pagina) --- */
+    .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .info-table th, .info-table td { border: 1px solid var(--border-color); padding: 12px; text-align: left; }
+    .info-table th { background-color: #05080D; color: var(--system-blue); }
+    .info-table tr:nth-child(even) { background-color: rgba(27, 34, 48, 0.4); }
+
+    /* --- Modals --- */
+    .modal {
+      display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 16, 26, 0.8); backdrop-filter: blur(5px);
+      justify-content: center; align-items: center; z-index: 1000;
+      visibility: hidden; opacity: 0; transition: opacity 0.3s ease, visibility 0s 0.3s;
+    }
+    .modal.active { visibility: visible; opacity: 1; transition: opacity 0.3s ease; }
+    .modal-content { text-align: center; max-width: 90%; width: 450px; }
+    .modal-content button { padding: 12px 25px; font-weight: bold; background: var(--system-blue); color: #fff; border: none; cursor: pointer; margin: 10px; }
+    .modal-content button:hover { background: var(--system-blue-light); color: var(--bg-dark); }
+    #gateModal .modal-content button.decline { background: #555; }
+    #gateModal .modal-content button.decline:hover { background: #777; }
+
+    /* --- Wapen/Item Kaartjes --- */
+    .weapon-card-list { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .weapon-card, .item-card {
+      background: var(--panel-gradient); border: 1px solid var(--border-color);
+      padding: 15px; margin: 0; display: flex; flex-direction: column;
+      align-items: center; text-align: center; width: 160px;
+      box-sizing: border-box; transition: all 0.3s ease;
+      clip-path: polygon(0 10px, 10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+    }
+    .weapon-card:hover, .item-card:hover { transform: translateY(-5px); border-color: var(--system-blue); box-shadow: 0 0 15px rgba(0, 132, 255, 0.2); }
+    .weapon-item-icon, .item-icon { width: 80px; height: 80px; margin-bottom: 10px; image-rendering: pixelated; background: rgba(0,0,0,0.3); border-radius: 4px; padding: 5px; }
+    .weapon-card-name, .item-card-name { font-size: 1.1em; font-weight: bold; color: var(--system-blue); margin-bottom: 5px; }
+    .weapon-card-rank, .item-card-cost-display, .weapon-card-cost { font-size: 0.9em; color: var(--system-blue-light); margin-bottom: 5px; }
+    .weapon-card-ability, .item-card-effect { font-size: 0.8em; color: var(--text-secondary); font-style: italic; margin-bottom: 10px; min-height: 2.4em; }
+    .weapon-card button, .item-card button { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 12px; font-weight: 600; cursor: pointer; width: 100%; }
+    .weapon-card button:hover:not(:disabled), .item-card button:hover:not(:disabled) { background: var(--system-blue); color: #fff; border-color: var(--system-blue); }
+    .weapon-card button:disabled, .item-card button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* --- NOTIFICATIE SYSTEEM --- */
+    #notification-container { position: fixed; top: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+    .notification { padding: 15px 20px; border-radius: 5px; color: #fff; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,0.5); border-left: 5px solid; animation: slideIn 0.5s ease, fadeOut 0.5s ease 4.5s; }
+    .notification.quest { background-color: var(--notification-quest); border-color: var(--system-blue-light); }
+    .notification.level-up { background-color: rgba(255, 215, 0, 0.85); border-color: #FFD700; text-shadow: 0 0 5px #000; }
+    .notification.streak { background: linear-gradient(45deg, #FFD700, #F0B400); border-color: #fff; text-shadow: 0 0 5px #000; }
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateX(10%); } }
   </style>
 </head>
 <body>
@@ -259,6 +272,7 @@
   <div class="nav">
     <button onclick="showPage('status')">Status</button>
     <button onclick="showPage('quests')">Quests</button>
+    <button onclick="showPage('gate')">Gate</button>
     <button onclick="showPage('shop')">Shop</button>
     <button onclick="showPage('inventory')">Inventory</button>
     <button onclick="showPage('generalInfo')">Info</button>
@@ -269,24 +283,42 @@
   <div id="status" class="section active">
     <h2>Status</h2>
     <div class="panel">
-      <p><strong>Level:</strong> <span id="level">1</span></p>
-      <p><strong>Points:</strong> <span id="points">0</span></p>
-      <p><strong>Gold:</strong> <span id="gold">0</span></p>
-      <p><strong>Silver:</strong> <span id="silver">0</span></p>
-      <p><strong>Current Rank:</strong> <span id="rank">F</span></p>
-      <p><strong>Available Ranks:</strong> F, E, D, C, B, A, S, S+, S++</p>
+      <div class="status-grid">
+        <div class="status-main-stats">
+          <div class="stat-block"><span class="stat-label">Level</span><span class="stat-value" id="level">1</span></div>
+          <div class="stat-block"><span class="stat-label">Rank</span><span class="stat-value" id="rank">F</span></div>
+        </div>
+        <div class="status-secondary-stats">
+          <div class="stat-block"><span class="stat-label">Points</span><span class="stat-value" id="points">0</span></div>
+          <div class="stat-block"><span class="stat-label">Gold</span><span class="stat-value" id="gold">0</span></div>
+          <div class="stat-block"><span class="stat-label">Silver</span><span class="stat-value" id="silver">0</span></div>
+        </div>
+        <div class="ranks-info">Available Ranks: F, E, D, C, B, A, S, S+, S++</div>
+      </div>
     </div>
   </div>
 
   <div id="quests" class="section">
-    <h2>Daily Quests</h2>
-    <ul id="dailyList"></ul>
-    <h2>Daily Physical Quests</h2>
-    <ul id="dailyPhysicalList"></ul>
-    <h2>Special Quests</h2>
-    <ul id="specialList"></ul>
-    <h2>Streak Challenges</h2>
-    <ul id="streakList"></ul>
+    <h2>Daily Quests</h2><ul id="dailyList" class="quest-list"></ul>
+    <h2>Daily Physical Quests</h2><ul id="dailyPhysicalList" class="quest-list"></ul>
+    <h2>Special Quests</h2><ul id="specialList" class="quest-list"></ul>
+    <h2>Streak Challenges</h2><ul id="streakList" class="quest-list"></ul>
+  </div>
+
+  <div id="gate" class="section">
+    <h2>Gates</h2>
+    <div id="gate-selection-container" class="panel">
+      <!-- Gate buttons will be generated here by JavaScript -->
+    </div>
+    <h3>Active Gates</h3>
+    <ul id="active-gates-list" class="quest-list">
+      <!-- Active gates will be generated here -->
+    </ul>
+    <h3>Statistics</h3>
+    <div class="panel">
+        <p>Accepted Gates: <span id="gates-accepted">0</span></p>
+        <p>Declined Gates: <span id="gates-declined">0</span></p>
+    </div>
   </div>
 
   <div id="shop" class="section">
@@ -295,65 +327,28 @@
       <p>You have <strong><span id="shopPoints">0</span> points</strong>, <strong><span id="shopGold">0</span> Gold</strong>, and <strong><span id="shopSilver">0</span> Silver</strong>.</p>
       <button onclick="showShopPage('rankUpgrades')">Rank Upgrades</button>
       <button onclick="showShopPage('itemShop')">Item Shop</button>
-      <button onclick="showShopPage('realLifeRewards')">Real-Life Rewards</button>
       <button onclick="showShopPage('weaponShop')">Weapon Shop</button>
     </div>
-
-    <div id="rankUpgrades" class="panel shop-submenu">
-      <h3>Rank Upgrades</h3>
-      <ul id="rankUpgradeList">
-        </ul>
-      <button onclick="showShopPage('mainShop')">Back to Shop</button>
-    </div>
-
-    <div id="itemShop" class="panel shop-submenu">
-      <h3>Item Shop</h3>
-      <p>Purchase various items to aid your journey!</p>
-      <ul id="itemList" class="weapon-card-list">
-        </ul>
-      <button onclick="showShopPage('mainShop')">Back to Shop</button>
-    </div>
-
-    <div id="realLifeRewards" class="panel shop-submenu">
-      <h3>Real-Life Rewards</h3>
-      <p>Purchase these rewards with Gold for a real-life treat! (Self-enforced)</p>
-      <ul id="realLifeRewardsList">
-        </ul>
-      <button onclick="showShopPage('mainShop')">Back to Shop</button>
-    </div>
-
-    <div id="weaponShop" class="panel shop-submenu">
-      <h3>Weapon Shop</h3>
-      <p>Acquire powerful weapons to aid your journey!</p>
-      <ul id="weaponList" class="weapon-card-list">
-        </ul>
-      <button onclick="showShopPage('mainShop')">Back to Shop</button>
-    </div>
+    <div id="rankUpgrades" class="panel shop-submenu"><ul id="rankUpgradeList" class="quest-list"></ul><button onclick="showShopPage('mainShop')">Back to Shop</button></div>
+    <div id="itemShop" class="panel shop-submenu"><ul id="itemList" class="weapon-card-list"></ul><button onclick="showShopPage('mainShop')">Back to Shop</button></div>
+    <div id="weaponShop" class="panel shop-submenu"><ul id="weaponList" class="weapon-card-list"></ul><button onclick="showShopPage('mainShop')">Back to Shop</button></div>
   </div>
 
   <div id="inventory" class="section">
     <h2>Inventory</h2>
-    <div class="panel">
-      <p>Your current arsenal:</p>
-      <ul id="inventoryList" class="weapon-card-list">
-        </ul>
-    </div>
+    <div class="panel"><ul id="inventoryList" class="weapon-card-list"></ul></div>
   </div>
-
 
   <div id="generalInfo" class="section">
     <h2>Game Information & Progression Guide</h2>
     <div class="panel">
         <h3>Welcome, Adventurer!</h3>
         <p>This application is designed to help you track and gamify your daily habits and personal challenges. By completing quests, you earn **XP (Experience Points)**, **Points**, and **Gold**, allowing you to level up, increase your rank, and unlock special rewards!</p>
-
         <h3>Level & XP System</h3>
         <p>Your **Level** represents your overall progress and dedication. You earn XP by completing any type of quest. The amount of XP required to reach the next level increases as you level up, ensuring a balanced progression.</p>
         <p><strong>XP Needed per Level:</strong></p>
         <table class="info-table">
-            <thead>
-                <tr><th>From Level</th><th>To Level</th><th>XP Needed</th><th>Cumulative XP</th></tr>
-            </thead>
+            <thead><tr><th>From Level</th><th>To Level</th><th>XP Needed</th><th>Cumulative XP</th></tr></thead>
             <tbody>
                 <tr><td>1</td><td>2</td><td>200</td><td>200</td></tr>
                 <tr><td>2</td><td>3</td><td>400</td><td>600</td></tr>
@@ -363,15 +358,12 @@
                 <tr><td>...</td><td>...</td><td>(Level * 200)</td><td>...</td></tr>
             </tbody>
         </table>
-
         <h3>Quests: Your Path to Power</h3>
-        <p>There are three types of quests, each serving a unique purpose:</p>
         <ul>
             <li><strong>Daily Quests:</strong> These are your essential daily habits (e.g., brushing teeth, taking meds). They offer small amounts of XP and Points, but reset every day at midnight, rewarding consistency.</li>
             <li><strong>Daily Physical Quests:</strong> These are specific physical exercises like Yoga or Workouts. They also reset daily and reward consistent physical activity.</li> <li><strong>Special Quests:</strong> These are larger, one-time tasks (e.g., cleaning your desk, exercising). They offer substantial XP and Points, but are active for 3 days and refresh every 3 days with new challenges.</li>
             <li><strong>Streak Challenges:</strong> These are long-term achievements that reward your consistent completion of specific daily quests for a set number of consecutive days (e.g., brushing teeth 7 days in a row). They offer significant XP, Points, and are the primary way to earn **Gold**. Once completed, they cannot be done again.</li>
         </ul>
-
         <h3>Rank System: Ascend to Greater Heights!</h3>
         <p>Your **Rank** (from F to S++) signifies your mastery and provides a bonus to the XP and Points you earn from quests. Higher ranks mean faster progress!</p>
         <p><strong>Rank Upgrades:</strong> To advance to the next rank, you must meet two criteria:</p>
@@ -382,20 +374,15 @@
         <p>This ensures balanced growth – you need to be both experienced (Level) and active (Points) to climb the ranks.</p>
         <p><strong>Rank Upgrade Requirements:</strong></p>
         <table class="info-table">
-            <thead>
-                <tr><th>From Rank</th><th>To Rank</th><th>Min. Level</th><th>Points Cost</th></tr>
-            </thead>
-            <tbody id="rankUpgradeInfoTableBody">
-                </tbody>
+            <thead><tr><th>From Rank</th><th>To Rank</th><th>Min. Level</th><th>Points Cost</th></tr></thead>
+            <tbody id="rankUpgradeInfoTableBody"></tbody>
         </table>
-
         <h3>Currency: Points, Silver & Gold</h3>
         <ul>
             <li><strong>Points:</strong> Earned from all quests. Primarily used to upgrade your Rank, or can be used to purchase **Items** in the Item Shop.</li>
             <li><strong>Silver:</strong> A common currency used to purchase certain items, especially weapons for lower ranks (F-C) and some special **Items**. You can earn Silver by purchasing specific Items with Points.</li>
             <li><strong>Gold:</strong> A rare currency earned specifically from completing **Streak Challenges**. Gold is used to purchase valuable **Real-Life Rewards** and advanced weapons for higher ranks (B-S++). You can also earn Gold by purchasing specific Items with Points or Silver.</li>
         </ul>
-        
         <h3>Item Shop: Strategic Purchases!</h3>
         <p>The Item Shop offers unique purchases that provide immediate benefits or help you convert lower-value currency into higher-value currency. These items are consumed upon purchase and do not appear in your Inventory.</p>
         <p>Current items available:</p>
@@ -405,7 +392,6 @@
             <li><strong>Advanced Mana Crystal:</strong> Spend 1000 Silver to instantly gain 250 XP. (Repeatable)</li>
         </ul>
         <p>Strategically use these items to manage your resources and accelerate your progress!</p>
-
         <h3>Weapons: Enhance Your Collection!</h3>
         <p>Weapons are collectible items that you can purchase from the Weapon Shop using Silver or Gold. Each weapon is associated with a specific Rank. You must achieve that Rank before you can purchase the weapon. Collecting all weapons will grant you a significant bonus reward!</p>
         <p><strong>Weapon Costs and Requirements:</strong></p>
@@ -415,52 +401,108 @@
         </ul>
         <p>Upon collecting **all** weapons, you will receive a grand bonus of <strong>2000 XP, 500 Points, 100 Gold, and 2000 Silver!</strong></p>
     </div>
-    <button onclick="showPage('status')">Back to Status</button>
   </div>
 
   <div class="modal" id="questModal">
+    <div class="modal-content panel"><p id="modalText"></p><button onclick="confirmQuest(true)">Yes</button><button onclick="confirmQuest(false)">No</button></div>
+  </div>
+  
+  <div class="modal" id="gateModal">
     <div class="modal-content panel">
-      <p id="modalText"></p>
-      <button onclick="confirmQuest(true)">Yes</button>
-      <button onclick="confirmQuest(false)">No</button>
+        <h3 id="gateModalTitle">New Gate Discovered!</h3>
+        <p id="gateModalText"></p>
+        <p id="gateModalRewards"></p>
+        <button onclick="acceptGateQuest()">Accept</button>
+        <button onclick="declineGateQuest()" class="decline">Decline</button>
     </div>
   </div>
 
+  <div id="notification-container"></div>
+
   <script>
     const ranks = ["F", "E", "D", "C", "B", "A", "S", "S+", "S++"];
-    const rankMultiplier = [
-        1,    // F-Rank: 0% bonus (basis)
-        1.05, // E-Rank: 5% bonus
-        1.1,  // D-Rank: 10% bonus
-        1.15, // C-Rank: 15% bonus
-        1.2,  // B-Rank: 20% bonus
-        1.25, // A-Rank: 25% bonus
-        1.3,  // S-Rank: 30% bonus
-        1.35, // S+-Rank: 35% bonus
-        1.4   // S++-Rank: 40% bonus
-    ];
+    const rankMultiplier = [ 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4 ];
+    const rankLevelRequirements = [ 1, 2, 4, 7, 10, 14, 18, 23, 29 ];
 
-    const rankLevelRequirements = [
-        1,   // F-Rank start op Level 1 (of je bent al Level 1)
-        2,   // E-Rank vereist Level 2 (om van F naar E te gaan)
-        4,   // D-Rank vereist Level 4 (om van E naar D te gaan)
-        7,   // C-Rank vereist Level 7
-        10,  // B-Rank vereist Level 10
-        14,  // A-Rank vereist Level 14
-        18,  // S-Rank vereist Level 18
-        23,  // S+-Rank vereist Level 23
-        29   // S++-Rank vereist Level 29
-    ];
+    const gateQuestPool = {
+        0: [ // F-Rank
+            { text: "Do 3 wall push-ups", xp: 50, points: 50, gold: 5 },
+            { text: "Walk in place for 2 minutes", xp: 55, points: 50, gold: 5 },
+            { text: "Brush your teeth after waking", xp: 60, points: 55, gold: 5 },
+            { text: "Drink a full glass of water (within 10 min of waking)", xp: 55, points: 50, gold: 5 },
+            { text: "Do 5 slow arm circles", xp: 50, points: 50, gold: 5 },
+            { text: "Put on outside clothes (even if not going out)", xp: 60, points: 60, gold: 6 }
+        ],
+        1: [ // E-Rank
+            { text: "Do 5 wall push-ups", xp: 60, points: 60, gold: 6 },
+            { text: "Walk in place for 5 minutes", xp: 70, points: 65, gold: 6 },
+            { text: "Do 10 jumping jacks", xp: 70, points: 70, gold: 7 },
+            { text: "Stretch for 1 minute", xp: 65, points: 65, gold: 6 },
+            { text: "2 minutes of deep breathing with eyes closed", xp: 70, points: 70, gold: 7 },
+            { text: "Write 1 positive sentence about today", xp: 65, points: 65, gold: 6 }
+        ],
+        2: [ // D-Rank
+            { text: "Do 10 push-ups or knee push-ups", xp: 90, points: 85, gold: 8 },
+            { text: "Go outside for 3 minutes", xp: 85, points: 80, gold: 8 },
+            { text: "Do 15 squats", xp: 90, points: 85, gold: 8 },
+            { text: "Meditate for 5 minutes", xp: 100, points: 90, gold: 9 },
+            { text: "Hold a plank for 20 seconds", xp: 90, points: 85, gold: 8 },
+            { text: "Journal 1 paragraph about how you're feeling", xp: 95, points: 85, gold: 9 }
+        ],
+        3: [ // C-Rank
+            { text: "Do 25 squats", xp: 130, points: 110, gold: 12 },
+            { text: "Plank for 40 seconds", xp: 125, points: 115, gold: 12 },
+            { text: "3 rounds: 10 jumping jacks + 5 push-ups", xp: 135, points: 120, gold: 13 },
+            { text: "Go outside and walk for 10 minutes", xp: 140, points: 125, gold: 13 },
+            { text: "10 minutes deep focus on one task", xp: 130, points: 120, gold: 12 },
+            { text: "Take a cold or cool shower", xp: 145, points: 130, gold: 14 }
+        ],
+        4: [ // B-Rank
+            { text: "4 rounds: 10 squats + 5 push-ups + 10 arm swings", xp: 180, points: 150, gold: 16 },
+            { text: "20-minute no screen zone", xp: 170, points: 150, gold: 15 },
+            { text: "Do one delayed chore for 10+ minutes", xp: 180, points: 160, gold: 16 },
+            { text: "Walk for 15 minutes", xp: 175, points: 160, gold: 15 },
+            { text: "10 minutes posture/reset stretching", xp: 170, points: 150, gold: 15 },
+            { text: "Write one full journal page", xp: 185, points: 165, gold: 17 }
+        ],
+        5: [ // A-Rank
+            { text: "30-minute bodyweight workout", xp: 240, points: 200, gold: 25 },
+            { text: "2 hours no screen, just silence/focus", xp: 250, points: 210, gold: 25 },
+            { text: "Deep-clean one room/zone", xp: 230, points: 200, gold: 24 },
+            { text: "Cook/prepare one healthy item", xp: 220, points: 190, gold: 23 },
+            { text: "Message someone something real/kind", xp: 210, points: 180, gold: 22 },
+            { text: "Cold exposure for 5 minutes", xp: 260, points: 220, gold: 26 }
+        ],
+        6: [ // S-Rank
+            { text: "30-minute full-body workout with intensity", xp: 300, points: 250, gold: 30 },
+            { text: "Write down every lie you’re telling yourself", xp: 320, points: 260, gold: 32 },
+            { text: "Create something for 30+ minutes (draw, write, design)", xp: 310, points: 250, gold: 30 },
+            { text: "Go fully offline for 3+ hours and reflect", xp: 330, points: 275, gold: 33 },
+            { text: "Read a real book for 30 minutes", xp: 300, points: 240, gold: 28 },
+            { text: "Sit in silence with yourself for 20 minutes", xp: 310, points: 260, gold: 30 }
+        ],
+        7: [ // S+-Rank
+            { text: "Complete a full 45-minute intense workout (no breaks longer than 1 min)", xp: 400, points: 320, gold: 40 },
+            { text: "Sit with your biggest internal fear — journal 2 full pages about it", xp: 420, points: 340, gold: 42 },
+            { text: "Do a full room reset: clean, organize, and emotionally reclaim it", xp: 430, points: 350, gold: 43 },
+            { text: "Talk openly with someone you’ve been avoiding or hiding from", xp: 410, points: 330, gold: 41 },
+            { text: "Fast from all screens and input for 6 hours — just exist", xp: 440, points: 360, gold: 44 },
+            { text: "Take one action on a life goal you’ve been delaying for weeks", xp: 450, points: 375, gold: 45 }
+        ],
+        8: [ // S++-Rank
+            { text: "Spend 1 hour in complete silence, no distractions, no stimulation — just you and your thoughts", xp: 500, points: 420, gold: 50 },
+            { text: "Write a full letter to your future self — 3+ pages, raw and honest", xp: 520, points: 440, gold: 52 },
+            { text: "Commit to a full day of self-discipline (no PMO, no sugar, no excuses, full routine)", xp: 530, points: 450, gold: 53 },
+            { text: "Perform a “ritual” reset: shower, groom, dress, clean, breathe, sit — reset your entire being", xp: 510, points: 430, gold: 51 },
+            { text: "Forgive yourself — truly — by writing out what you regret and letting it go", xp: 540, points: 470, gold: 54 },
+            { text: "Take the first step on a major life decision you’ve been avoiding — no matter how small", xp: 550, points: 480, gold: 55 }
+        ]
+    };
 
-    // De standaard (hardcoded) staat van de app als er geen save-bestand is geladen
-    // of als nieuwe velden moeten worden geïnitialiseerd.
     const defaultData = {
-      level: 1,
-      xp: 0,
-      points: 0,
-      gold: 0,
-      silver: 0, // NIEUW: Zilver valuta
-      rank: 0,
+      level: 1, xp: 0, points: 0, gold: 0, silver: 0, rank: 0,
+      activeGates: [],
+      gateStats: { accepted: 0, declined: 0 },
       dailyQuests: [
         { id: 'brush_teeth_1', text: "Brush teeth (morning)", xp: 10, points: 2, done: false },
         { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
@@ -470,67 +512,40 @@
         { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 5, done: false }, 
         { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 5, done: false },
         { id: 'skin_routine', text: "Skin Routine face/leg", xp: 20, points: 5, done: false },
-
       ],
-      // NIEUW: Dagelijkse Fysieke Quests
-dailyPhysicalQuests: [
-  { text: "Naked Yoga (5 min)", xp: 30, points: 8, done: false },
-  { text: "Naked Yoga (10 min)", xp: 50, points: 12, done: false },
-  { text: "Naked Workout (5 min)", xp: 30, points: 8, done: false },
-  { text: "Quick Morning Stretch (2 min, naked optional)", xp: 15, points: 5, done: false },
-  { text: "Toe Tap (1 min, lying down, naked optional)", xp: 15, points: 5, done: false },
-  { text: "Crunch Kicks (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
-  { text: "Handen achter rug klemmen (1 min, naked optional)", xp: 15, points: 5, done: false },
-  { text: "Omgekeerde Sneeuwengelen (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
-  { text: "Prone Flutter Kicks (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
-  { text: "Optillen Gestrekt Been links/rechts (1 min each, naked optional)", xp: 25, points: 7, done: false },
-  { text: "Crunches buikspieren (1 min, lying down, naked optional)", xp: 25, points: 7, done: false },
-  { text: "Leg In and Outs (1 min, sitting or lying, naked optional)", xp: 20, points: 6, done: false },
-  { text: "Armen Zijwaarts Optillen (1 min, naked optional)", xp: 15, points: 5, done: false },
-  { text: "Arm Circles (1 min, naked optional)", xp: 15, points: 5, done: false },
-  { text: "Butt Bridge (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
-  { text: "Beenslag Achter links/rechts (1 min each, naked optional)", xp: 25, points: 7, done: false },
-  { text: "Standing Dumbbell Curl (1 min, naked optional)", xp: 25, points: 7, done: false },
-  { text: "Crossbody Hammer Curl (1 min, naked optional)", xp: 25, points: 7, done: false },
-  { text: "Geconcentreerde Dumbbell Curl links/rechts (1 min each, seated, naked optional)", xp: 30, points: 8, done: false }
-],
-
+      dailyPhysicalQuests: [
+        { text: "Naked Yoga (5 min)", xp: 30, points: 8, done: false }, { text: "Naked Yoga (10 min)", xp: 50, points: 12, done: false },
+        { text: "Naked Workout (5 min)", xp: 30, points: 8, done: false }, { text: "Quick Morning Stretch (2 min, naked optional)", xp: 15, points: 5, done: false },
+        { text: "Toe Tap (1 min, lying down, naked optional)", xp: 15, points: 5, done: false }, { text: "Crunch Kicks (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
+        { text: "Handen achter rug klemmen (1 min, naked optional)", xp: 15, points: 5, done: false }, { text: "Omgekeerde Sneeuwengelen (1 min, lying down, naked optional)", xp: 20, points: 6, done: false },
+        { text: "Prone Flutter Kicks (1 min, lying down, naked optional)", xp: 20, points: 6, done: false }, { text: "Optillen Gestrekt Been links/rechts (1 min each, naked optional)", xp: 25, points: 7, done: false },
+        { text: "Crunches buikspieren (1 min, lying down, naked optional)", xp: 25, points: 7, done: false }, { text: "Leg In and Outs (1 min, sitting or lying, naked optional)", xp: 20, points: 6, done: false },
+        { text: "Armen Zijwaarts Optillen (1 min, naked optional)", xp: 15, points: 5, done: false }, { text: "Arm Circles (1 min, naked optional)", xp: 15, points: 5, done: false },
+        { text: "Butt Bridge (1 min, lying down, naked optional)", xp: 20, points: 6, done: false }, { text: "Beenslag Achter links/rechts (1 min each, naked optional)", xp: 25, points: 7, done: false },
+        { text: "Standing Dumbbell Curl (1 min, naked optional)", xp: 25, points: 7, done: false }, { text: "Crossbody Hammer Curl (1 min, naked optional)", xp: 25, points: 7, done: false },
+        { text: "Geconcentreerde Dumbbell Curl links/rechts (1 min each, seated, naked optional)", xp: 30, points: 8, done: false }
+      ],
       allSpecialQuests: [
-        { text: "Spend one day with less than 30 min total PMO", xp: 200, points: 50 },
-        { text: "Exercise for 10min", xp: 120, points: 30 },
-        { text: "Change bed sheets", xp: 120, points: 30 },
-        { text: "Organize files", xp: 120, points: 30 },
-        { text: "Eye Exercise (once)", xp: 120, points: 35 },
-        { text: "Clip nails (hands or feet)", xp: 80, points: 20 },
-        { text: "Use mouthwash (Listerine)", xp: 100, points: 25 },
-        { text: "Spend one day completely without PMO", xp: 400, points: 150 },
-        { text: "Stretch for 5 min straight", xp: 100, points: 30 },
-        { text: "Walk (or move around room) continuously for 5 mins", xp: 120, points: 50 },
-        { text: "Complete short physical therapy or guided workout video (5-10 min)", xp: 130, points: 60 },
-        { text: "Vacuum/sweep bedroom", xp: 150, points: 40 },
-        { text: "Organize one small physical area (desk, shelf, drawer)", xp: 120, points: 30 },
-        { text: "Successfully delay PMO impulse by 1 hour (once)", xp: 175, points: 80 },
-        { text: "Perform gentle (naked) yoga/stretching for 10 mins", xp: 120, points: 35 },
-        { text: "One time sleep at (2AM)", xp: 120, points: 30 }
+        { text: "Spend one day with less than 30 min total PMO", xp: 200, points: 50 }, { text: "Exercise for 10min", xp: 120, points: 30 },
+        { text: "Change bed sheets", xp: 120, points: 30 }, { text: "Organize files", xp: 120, points: 30 },
+        { text: "Eye Exercise (once)", xp: 120, points: 35 }, { text: "Clip nails (hands or feet)", xp: 80, points: 20 },
+        { text: "Use mouthwash (Listerine)", xp: 100, points: 25 }, { text: "Spend one day completely without PMO", xp: 400, points: 150 },
+        { text: "Stretch for 5 min straight", xp: 100, points: 30 }, { text: "Walk (or move around room) continuously for 5 mins", xp: 120, points: 50 },
+        { text: "Complete short physical therapy or guided workout video (5-10 min)", xp: 130, points: 60 }, { text: "Vacuum/sweep bedroom", xp: 150, points: 40 },
+        { text: "Organize one small physical area (desk, shelf, drawer)", xp: 120, points: 30 }, { text: "Successfully delay PMO impulse by 1 hour (once)", xp: 175, points: 80 },
+        { text: "Perform gentle (naked) yoga/stretching for 10 mins", xp: 120, points: 35 }, { text: "One time sleep at (2AM)", xp: 120, points: 30 }
       ],
       activeSpecials: [],
       lastDailyReset: new Date().toDateString(),
       lastSpecialReset: new Date().toDateString(),
-      lastPhysicalReset: new Date().toDateString(), // NIEUW: Datum voor reset fysieke taken
-      realLifeRewards: [
-        { id: 'gaming_hour', text: "1 hour of gaming", cost: 10, bought: false },
-        { id: 'favorite_meal', text: "Order your favorite meal", cost: 25, bought: false },
-        { id: 'new_book', text: "Buy a new book", cost: 50, bought: false },
-        { id: 'day_off', text: "Take a full day off work/tasks", cost: 100, bought: false },
-        { id: 'weekend_trip', text: "Plan a weekend getaway", cost: 250, bought: false }
-      ],
+      lastPhysicalReset: new Date().toDateString(),
       dailyStreaks: {
         'brush_teeth_daily': { current: 0, lastCompletionDate: null },
         'take_meds_daily': { current: 0, lastCompletionDate: null }
       },
       streakQuests: [
         { id: 'brush_7_days', parentQuestId: 'brush_teeth_daily', threshold: 7, text: "Brush teeth 7 days in a row", xp: 500, points: 100, gold: 5, done: false },
-        { id: 'brush_14_days', parentQuestId: 'brush_teeth_daily', threshold: 14, text: "Brush teeth 14 days in a row", xp: 1000, points: 200, gold: 10, done: false },
+        { id: 'brush_14_days', parentQuestId: 'brush_teeth_daily', threshold: 14, text: "Brush teeth 10 days in a row", xp: 1000, points: 200, gold: 10, done: false },
         { id: 'brush_30_days', parentQuestId: 'brush_teeth_daily', threshold: 30, text: "Brush teeth 1 month in a row", xp: 2500, points: 500, gold: 25, done: false },
         { id: 'meds_2_days', parentQuestId: 'take_meds_daily', threshold: 2, text: "Took meds 2 days in a row", xp: 150, points: 30, gold: 2, done: false },
         { id: 'meds_4_days', parentQuestId: 'take_meds_daily', threshold: 4, text: "Took meds 4 days in a row", xp: 300, points: 60, gold: 4, done: false },
@@ -539,56 +554,15 @@ dailyPhysicalQuests: [
         { id: 'meds_30_days', parentQuestId: 'take_meds_daily', threshold: 30, text: "Took meds 1 month in a row", xp: 3000, points: 600, gold: 30, done: false }
       ],
       shopWeapons: [
-          { 
-            id: 'wooden_sword', name: "Wooden Sword", cost: 50, currency: "silver", requiredRank: 0, // F-rank (index 0)
-            icon: 'images/weapon_wood_sword_icon.png', 
-            image: 'images/weapon_wood_sword_large.png', 
-            ability: "A simple sword. Use it wisely."
-          },
-          { 
-            id: 'stone_dagger', name: "Stone Dagger", cost: 100, currency: "silver", requiredRank: 1, // E-rank (index 1)
-            icon: 'images/weapon_stone_dagger_icon.png', 
-            image: 'images/weapon_stone_dagger_large.png', 
-            ability: "A rough blade. Good for quick work."
-          },
-          { 
-            id: 'copper_spear', name: "Copper Spear", cost: 200, currency: "silver", requiredRank: 2, // D-rank (index 2)
-            icon: 'images/weapon_copper_spear_icon.png', 
-            image: 'images/weapon_copper_spear_large.png', 
-            ability: "A basic spear. Offers decent reach."
-          },
-          { 
-            id: 'iron_axe', name: "Iron Axe", cost: 400, currency: "silver", requiredRank: 3, // C-rank (index 3)
-            icon: 'images/weapon_iron_axe_icon.png', 
-            image: 'images/weapon_iron_axe_large.png', 
-            ability: "A sturdy axe. Great for chopping tasks."
-          },
-          { 
-            id: 'steel_sword', name: "Steel Sword", cost: 5, currency: "gold", requiredRank: 4, // B-rank (index 4)
-            icon: 'images/weapon_steel_sword_icon.png', 
-            image: 'images/weapon_steel_sword_large.png', 
-            ability: "A balanced sword. A true adventurer's companion."
-          },
-          { 
-            id: 'silver_bow', name: "Silver Bow", cost: 10, currency: "gold", requiredRank: 5, // A-rank (index 5)
-            icon: 'images/weapon_silver_bow_icon.png', 
-            image: 'images/weapon_silver_bow_large.png', 
-            ability: "An elegant bow. For precise strikes."
-          },
-          { 
-            id: 'mythril_staff', name: "Mythril Staff", cost: 20, currency: "gold", requiredRank: 6, // S-rank (index 6)
-            icon: 'images/weapon_mythril_staff_icon.png', 
-            image: 'images/weapon_mythril_staff_large.png', 
-            ability: "A magical staff. Channels inner power."
-          },
-          { 
-            id: 'dragon_blade', name: "Dragon Blade", cost: 40, currency: "gold", requiredRank: 7, // S+-rank (index 7)
-            icon: 'images/weapon_dragon_blade_icon.png', 
-            image: 'images/weapon_dragon_blade_large.png', 
-            ability: "Forged from dragon scales. The ultimate challenge awaits!"
-          }
+        { id: 'wooden_sword', name: "Wooden Sword", cost: 50, currency: "silver", requiredRank: 0, icon: 'images/weapon_wood_sword_icon.png', ability: "A simple sword. Use it wisely." },
+        { id: 'stone_dagger', name: "Stone Dagger", cost: 100, currency: "silver", requiredRank: 1, icon: 'images/weapon_stone_dagger_icon.png', ability: "A rough blade. Good for quick work." },
+        { id: 'copper_spear', name: "Copper Spear", cost: 200, currency: "silver", requiredRank: 2, icon: 'images/weapon_copper_spear_icon.png', ability: "A basic spear. Offers decent reach." },
+        { id: 'iron_axe', name: "Iron Axe", cost: 400, currency: "silver", requiredRank: 3, icon: 'images/weapon_iron_axe_icon.png', ability: "A sturdy axe. Great for chopping tasks." },
+        { id: 'steel_sword', name: "Steel Sword", cost: 5, currency: "gold", requiredRank: 4, icon: 'images/weapon_steel_sword_icon.png', ability: "A balanced sword. A true adventurer's companion." },
+        { id: 'silver_bow', name: "Silver Bow", cost: 10, currency: "gold", requiredRank: 5, icon: 'images/weapon_silver_bow_icon.png', ability: "An elegant bow. For precise strikes." },
+        { id: 'mythril_staff', name: "Mythril Staff", cost: 20, currency: "gold", requiredRank: 6, icon: 'images/weapon_mythril_staff_icon.png', ability: "A magical staff. Channels inner power." },
+        { id: 'dragon_blade', name: "Dragon Blade", cost: 40, currency: "gold", requiredRank: 7, icon: 'images/weapon_dragon_blade_icon.png', ability: "Forged from dragon scales. The ultimate challenge awaits!" }
       ],
-      // ITEMS DATA
       shopItems: [
         { id: 'diamond_item', name: "Diamond", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'Diament.png', ability: "Converts 100 Points into 1 Gold." },
         { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'ManaCrystal.png', ability: "Converts 10 Points into 50 Silver." },
@@ -598,60 +572,45 @@ dailyPhysicalQuests: [
       weaponCollectionCompleted: false 
     };
 
-    // Het actuele data object dat tijdens de sessie wordt gebruikt.
-    // Dit wordt geïnitialiseerd met de default data en dan overschreven/gemerged bij laden.
-    let data = { ...defaultData }; // Start met een kopie van de default data
-
+    let data = { ...defaultData };
     let currentQuestType = null;
     let currentQuestIndex = null;
-
-    // --- Core UI & Logic Functions ---
+    let tempGateQuest = null;
 
     function updateUI() {
       document.getElementById("level").textContent = data.level;
       document.getElementById("points").textContent = data.points;
       document.getElementById("gold").textContent = data.gold;
       document.getElementById("silver").textContent = data.silver;
+      document.getElementById("rank").textContent = ranks[data.rank];
       document.getElementById("shopPoints").textContent = data.points;
       document.getElementById("shopGold").textContent = data.gold;
       document.getElementById("shopSilver").textContent = data.silver;
-      document.getElementById("rank").textContent = ranks[data.rank];
 
       let xpNeeded = data.level * 200;
-      let percent = Math.min((data.xp / xpNeeded) * 100, 100);
+      let percent = data.xp > 0 ? Math.min((data.xp / xpNeeded) * 100, 100) : 0;
       let fill = document.getElementById("xpFill");
       fill.style.width = percent + "%";
       fill.textContent = `${data.xp} / ${xpNeeded} XP`;
 
-      // Daily Quests UI
       const dList = document.getElementById("dailyList");
       dList.innerHTML = "";
       data.dailyQuests.forEach((q, i) => {
         const li = document.createElement("li");
         li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P)`;
-        if (q.done) {
-          li.classList.add('done');
-        } else {
-          li.onclick = () => openModal("daily", i);
-        }
+        if (q.done) { li.classList.add('done'); } else { li.onclick = () => openModal("daily", i); }
         dList.appendChild(li);
       });
 
-      // NIEUW: Daily Physical Quests UI
       const dpList = document.getElementById("dailyPhysicalList");
       dpList.innerHTML = "";
       data.dailyPhysicalQuests.forEach((q, i) => {
         const li = document.createElement("li");
         li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P)`;
-        if (q.done) {
-          li.classList.add('done');
-        } else {
-          li.onclick = () => openModal("dailyPhysical", i); // Belangrijk: 'dailyPhysical' type
-        }
+        if (q.done) { li.classList.add('done'); } else { li.onclick = () => openModal("dailyPhysical", i); }
         dpList.appendChild(li);
       });
 
-      // Special Quests UI
       const sList = document.getElementById("specialList");
       sList.innerHTML = "";
       data.activeSpecials.forEach((q, i) => {
@@ -661,19 +620,13 @@ dailyPhysicalQuests: [
         const spanDaysLeft = document.createElement('span');
         spanDaysLeft.textContent = daysLeftText;
         li.appendChild(spanDaysLeft);
-
-        if (q.done || q.daysLeft <= 0) {
-          li.classList.add('done');
-        } else {
-          li.onclick = () => openModal("special", i);
-        }
+        if (q.done || q.daysLeft <= 0) { li.classList.add('done'); } else { li.onclick = () => openModal("special", i); }
         sList.appendChild(li);
       });
 
-      // Streak Quests UI
       const streakList = document.getElementById("streakList");
       streakList.innerHTML = "";
-      data.streakQuests.forEach((q, i) => {
+      data.streakQuests.forEach((q) => {
           const li = document.createElement("li");
           li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P / +${q.gold} Gold)`;
           if (q.done) {
@@ -681,79 +634,57 @@ dailyPhysicalQuests: [
           } else {
               const parentStreak = data.dailyStreaks[q.parentQuestId];
               if (parentStreak) {
-                  const currentProgress = parentStreak.current;
-                  li.textContent += ` (Current streak: ${currentProgress}/${q.threshold} days)`;
+                  li.textContent += ` (Current streak: ${parentStreak.current}/${q.threshold} days)`;
               }
               li.style.cursor = 'default';
           }
           streakList.appendChild(li);
       });
 
-      // Update Shop lijsten
       updateRankUpgradeList();
       updateItemShopList();
-      updateRealLifeRewardsList();
       updateWeaponShopList();
       updateInventoryList();
-
-      // Update Info Table (for Rank Upgrades) - Zorgt dat de tabel in Info gevuld is als Info actief is
       updateRankUpgradeInfoTable();
+      updateGatePage();
     }
 
     function openModal(type, index) {
       currentQuestType = type;
       currentQuestIndex = index;
       let q;
-      if (type === "daily") {
-        q = data.dailyQuests[index];
-      } else if (type === "dailyPhysical") { // NIEUW: Daily Physical Quest type
-        q = data.dailyPhysicalQuests[index];
-      } else if (type === "special") {
-        q = data.activeSpecials[index];
-      } else {
-        return; // Onbekend type
-      }
+      if (type === "daily") { q = data.dailyQuests[index]; } 
+      else if (type === "dailyPhysical") { q = data.dailyPhysicalQuests[index]; } 
+      else if (type === "special") { q = data.activeSpecials[index]; } 
+      else { return; }
 
-      if (q.done || (type === "special" && q.daysLeft <= 0)) {
-        return;
-      }
-
+      if (q.done || (type === "special" && q.daysLeft <= 0)) { return; }
       document.getElementById("modalText").textContent = `Did you complete: ${q.text}?`;
-      
-      const questModal = document.getElementById("questModal");
-      questModal.classList.add('active'); 
+      document.getElementById("questModal").classList.add('active'); 
     }
 
     function confirmQuest(yes) {
-      const questModal = document.getElementById("questModal");
-      questModal.classList.remove('active'); 
-
+      document.getElementById("questModal").classList.remove('active'); 
       if (yes) {
         let list;
-        if (currentQuestType === "daily") {
-          list = data.dailyQuests;
-        } else if (currentQuestType === "dailyPhysical") { // NIEUW: Daily Physical Quest type
-          list = data.dailyPhysicalQuests;
-        } else if (currentQuestType === "special") {
-          list = data.activeSpecials;
-        } else {
-          return; // Onbekend type
-        }
+        if (currentQuestType === "daily") { list = data.dailyQuests; } 
+        else if (currentQuestType === "dailyPhysical") { list = data.dailyPhysicalQuests; } 
+        else if (currentQuestType === "special") { list = data.activeSpecials; } 
+        else { return; }
 
         const q = list[currentQuestIndex];
-
         if (!q.done && !(currentQuestType === "special" && q.daysLeft <= 0)) {
           q.done = true;
-          data.xp += Math.floor(q.xp * rankMultiplier[data.rank]);
-          data.points += Math.floor(q.points * rankMultiplier[data.rank]);
-          checkLevelUp();
+          const xpGained = Math.floor(q.xp * rankMultiplier[data.rank]);
+          const pointsGained = Math.floor(q.points * rankMultiplier[data.rank]);
+          data.xp += xpGained;
+          data.points += pointsGained;
           
-          if (currentQuestType === "daily") { // Streaks alleen voor 'daily' quests
-              checkStreaks(q.id); 
-          }
+          showNotification(`Quest Completed! +${xpGained} XP & +${pointsGained} Points`, 'quest');
 
+          checkLevelUp();
+          if (currentQuestType === "daily") { checkStreaks(q.id); }
           updateUI();
-          console.log(`Quest "${q.text}" completed!`);
         }
       }
     }
@@ -764,22 +695,16 @@ dailyPhysicalQuests: [
         data.xp -= needed;
         data.level++;
         needed = data.level * 200;
-        console.log(`Level Up! You are now Level ${data.level}!`);
+        showNotification(`LEVEL UP! You are now Level ${data.level}`, 'level-up');
       }
     }
 
     function showPage(id) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(id).classList.add('active');
-      if (id === 'shop') {
-          showShopPage('mainShop');
-      }
-      if (id === 'generalInfo') {
-          updateRankUpgradeInfoTable();
-      }
-      if (id === 'inventory') { // Wanneer naar inventaris genavigeerd
-          updateInventoryList(); // Zorg dat de inventarislijst wordt bijgewerkt
-      }
+      if (id === 'shop') { showShopPage('mainShop'); }
+      if (id === 'generalInfo') { updateRankUpgradeInfoTable(); }
+      if (id === 'inventory') { updateInventoryList(); }
     }
 
     function showShopPage(id) {
@@ -791,425 +716,323 @@ dailyPhysicalQuests: [
         }
     }
 
+    function updateGatePage() {
+        const container = document.getElementById('gate-selection-container');
+        container.innerHTML = '<h3>Enter a Gate</h3>';
+        for(let i = 0; i < ranks.length; i++) {
+            const button = document.createElement('button');
+            button.textContent = `Enter Gate (${ranks[i]})`;
+            button.disabled = data.rank < i;
+            button.onclick = () => enterGate(i);
+            container.appendChild(button);
+        }
+
+        const list = document.getElementById('active-gates-list');
+        list.innerHTML = '';
+        if (data.activeGates.length === 0) {
+            list.innerHTML = '<li style="cursor:default; opacity: 0.6;">No active gates. Enter one to begin!</li>';
+        } else {
+            data.activeGates.forEach(gate => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${gate.text}</span>
+                    <span class="gate-timer" id="timer-${gate.id}">Time Left: ...</span>
+                    <button onclick="completeGate('${gate.id}')">Complete</button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        document.getElementById('gates-accepted').textContent = data.gateStats.accepted;
+        document.getElementById('gates-declined').textContent = data.gateStats.declined;
+    }
+
+    function enterGate(rankIndex) {
+        const pool = gateQuestPool[rankIndex];
+        if (!pool || pool.length === 0) {
+            showNotification('No quests available for this rank.', 'quest');
+            return;
+        }
+        tempGateQuest = { ...pool[Math.floor(Math.random() * pool.length)] };
+        
+        document.getElementById('gateModalText').textContent = tempGateQuest.text;
+        document.getElementById('gateModalRewards').textContent = `Rewards: ${tempGateQuest.xp} XP, ${tempGateQuest.points} Points, ${tempGateQuest.gold} Gold`;
+        document.getElementById('gateModal').classList.add('active');
+    }
+
+    function acceptGateQuest() {
+        if (!tempGateQuest) return;
+        const newGate = {
+            ...tempGateQuest,
+            id: `gate-${Date.now()}`,
+            expiresAt: Date.now() + 24 * 60 * 60 * 1000
+        };
+        data.activeGates.push(newGate);
+        data.gateStats.accepted++;
+        
+        document.getElementById('gateModal').classList.remove('active');
+        tempGateQuest = null;
+        updateUI();
+        showNotification('Gate quest accepted! You have 24 hours.', 'quest');
+    }
+
+    function declineGateQuest() {
+        data.gateStats.declined++;
+        document.getElementById('gateModal').classList.remove('active');
+        tempGateQuest = null;
+        updateUI();
+    }
+
+    function completeGate(gateId) {
+        const gateIndex = data.activeGates.findIndex(g => g.id === gateId);
+        if (gateIndex === -1) return;
+
+        const gate = data.activeGates[gateIndex];
+        data.xp += gate.xp;
+        data.points += gate.points;
+        data.gold += gate.gold;
+
+        showNotification(`Gate Cleared! +${gate.xp} XP, +${gate.points} Points, +${gate.gold} Gold`, 'level-up');
+        
+        data.activeGates.splice(gateIndex, 1);
+        checkLevelUp();
+        updateUI();
+    }
+
+    function updateGateTimers() {
+        const now = Date.now();
+        let changed = false;
+        data.activeGates = data.activeGates.filter(gate => {
+            if (gate.expiresAt < now) {
+                showNotification(`Gate quest "${gate.text}" expired.`, 'quest');
+                changed = true;
+                return false;
+            }
+            return true;
+        });
+
+        data.activeGates.forEach(gate => {
+            const timerElement = document.getElementById(`timer-${gate.id}`);
+            if (timerElement) {
+                const timeLeft = gate.expiresAt - now;
+                const hours = Math.floor((timeLeft / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                const seconds = Math.floor((timeLeft / 1000) % 60);
+                timerElement.textContent = `Time Left: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        });
+
+        if (changed) {
+            updateUI();
+        }
+    }
+
     function getRankUpgradeCost(targetRankIndex) {
       const baseCost = 1000;
       return baseCost + (targetRankIndex * 1500);
     }
 
     function updateRankUpgradeList() {
-        const rankList = document.getElementById("rankUpgradeList");
-        rankList.innerHTML = "";
-
-        for (let i = 0; i < ranks.length - 1; i++) {
-            const currentRank = ranks[i];
-            const nextRank = ranks[i + 1];
-            const upgradeLevelRequired = rankLevelRequirements[i + 1];
-            const upgradePointsCost = getRankUpgradeCost(i + 1);
-
-            const li = document.createElement("li");
-            li.innerHTML = `
-                <span>Upgrade from <strong>${currentRank}</strong> to <strong>${nextRank}</strong> Rank:</span><br>
-                <span>Requires: Level ${upgradeLevelRequired}, ${upgradePointsCost} Points</span>
-            `;
-
-            const buyButton = document.createElement("button");
-            buyButton.textContent = "Buy";
-            buyButton.onclick = () => buyRankUpgrade(i);
-            
-            if (data.rank === i) {
-                if (data.level >= upgradeLevelRequired && data.points >= upgradePointsCost) {
-                    buyButton.disabled = false;
-                } else {
-                    buyButton.disabled = true;
-                }
-            } else if (data.rank > i) {
-                buyButton.textContent = "Achieved";
-                buyButton.disabled = true;
-                li.classList.add('done');
-            } else {
-                buyButton.textContent = "Locked";
-                buyButton.disabled = true;
-            }
-
-            li.appendChild(buyButton);
-            rankList.appendChild(li);
+      const rankList = document.getElementById("rankUpgradeList");
+      rankList.innerHTML = "";
+      for (let i = 0; i < ranks.length - 1; i++) {
+        const nextRankIndex = i + 1;
+        const upgradeLevelRequired = rankLevelRequirements[nextRankIndex];
+        const upgradePointsCost = getRankUpgradeCost(nextRankIndex);
+        const li = document.createElement("li");
+        li.innerHTML = `<span>Upgrade from <strong>${ranks[i]}</strong> to <strong>${ranks[nextRankIndex]}</strong>:</span><br><span>Requires: Level ${upgradeLevelRequired}, ${upgradePointsCost} Points</span>`;
+        const buyButton = document.createElement("button");
+        buyButton.textContent = "Buy";
+        buyButton.onclick = () => buyRankUpgrade(i);
+        if (data.rank === i) {
+          buyButton.disabled = !(data.level >= upgradeLevelRequired && data.points >= upgradePointsCost);
+        } else if (data.rank > i) {
+          buyButton.textContent = "Achieved";
+          buyButton.disabled = true;
+          li.classList.add('done');
+        } else {
+          buyButton.textContent = "Locked";
+          buyButton.disabled = true;
         }
+        li.appendChild(buyButton);
+        rankList.appendChild(li);
+      }
     }
 
-    function buyRealLifeReward(rewardId) {
-        const reward = data.realLifeRewards.find(r => r.id === rewardId);
+    function buyRankUpgrade(rankIndex) {
+      const nextRankIndex = rankIndex + 1;
+      const requiredLevel = rankLevelRequirements[nextRankIndex];
+      const cost = getRankUpgradeCost(nextRankIndex);
 
-        if (reward && !reward.bought) {
-            if (data.gold >= reward.cost) {
-                data.gold -= reward.cost;
-                reward.bought = true;
-                alert(`Reward purchased! Enjoy your "${reward.text}"!`);
-                updateUI();
-            } else {
-                alert(`Not enough Gold! You need ${reward.cost} Gold to buy "${reward.text}".`);
-            }
-        }
+      if (data.level >= requiredLevel && data.points >= cost && data.rank === rankIndex) {
+        data.points -= cost;
+        data.rank = nextRankIndex;
+        showNotification(`RANK UP! You are now Rank ${ranks[data.rank]}!`, 'level-up');
+        updateUI();
+      } else {
+        alert("You do not meet the requirements for this rank upgrade.");
+      }
     }
 
-    // --- Item Shop Logica ---
     function updateItemShopList() {
-        const itemList = document.getElementById("itemList");
-        itemList.innerHTML = "";
-
-        defaultData.shopItems.forEach(item => {
-            const li = document.createElement("li");
-            li.classList.add('item-card'); // Toepassen van de kaart-styling class
-
-            let costText = `${item.cost} ${item.currency}`;
-            let rewardText = `Get: ${item.rewardAmount} ${item.rewardType.toUpperCase()}`; // Bijv. Get: 1 GOLD of Get: 250 XP
-            
-            li.innerHTML = `
-                <img src="${item.icon}" alt="${item.name} icon" class="item-icon">
-                <span class="item-card-name">${item.name}</span>
-                <span class="item-card-cost-display">Cost: ${costText}</span>
-                <span class="item-card-effect">${item.ability || rewardText}</span> `;
-
-            const buyButton = document.createElement("button");
-            buyButton.textContent = "Buy";
-            
-            // Controleer of de speler genoeg valuta heeft
-            let hasEnoughCurrency = false;
-            if (item.currency === "points") {
-                hasEnoughCurrency = data.points >= item.cost;
-            } else if (item.currency === "silver") {
-                hasEnoughCurrency = data.silver >= item.cost;
-            } else if (item.currency === "gold") {
-                hasEnoughCurrency = data.gold >= item.cost;
-            }
-
-            buyButton.disabled = !hasEnoughCurrency; // Knop uitgeschakeld indien geen valuta
-            buyButton.onclick = () => buyItem(item.id); // Roep buyItem functie aan
-            
-            li.appendChild(buyButton);
-            itemList.appendChild(li);
-        });
+      const itemList = document.getElementById("itemList");
+      itemList.innerHTML = "";
+      defaultData.shopItems.forEach(item => {
+        const li = document.createElement("li");
+        li.classList.add('item-card');
+        li.innerHTML = `<img src="${item.icon}" alt="${item.name} icon" class="item-icon"><span class="item-card-name">${item.name}</span><span class="item-card-cost-display">Cost: ${item.cost} ${item.currency}</span><span class="item-card-effect">${item.ability}</span>`;
+        const buyButton = document.createElement("button");
+        buyButton.textContent = "Buy";
+        let hasEnoughCurrency = (item.currency === "points" && data.points >= item.cost) || (item.currency === "silver" && data.silver >= item.cost) || (item.currency === "gold" && data.gold >= item.cost);
+        buyButton.disabled = !hasEnoughCurrency;
+        buyButton.onclick = () => buyItem(item.id);
+        li.appendChild(buyButton);
+        itemList.appendChild(li);
+      });
     }
 
     function buyItem(itemId) {
-        const item = defaultData.shopItems.find(i => i.id === itemId);
+      const item = defaultData.shopItems.find(i => i.id === itemId);
+      if (!item) { return; }
+      let hasEnoughCurrency = (item.currency === "points" && data.points >= item.cost) || (item.currency === "silver" && data.silver >= item.cost) || (item.currency === "gold" && data.gold >= item.cost);
+      if (!hasEnoughCurrency) { showNotification(`Not enough ${item.currency}!`, 'quest'); return; }
+      
+      if (item.currency === "points") { data.points -= item.cost; } else if (item.currency === "silver") { data.silver -= item.cost; } else if (item.currency === "gold") { data.gold -= item.cost; }
 
-        if (!item) {
-            alert("This item is not available.");
-            return;
-        }
-
-        // Valuta checks
-        let hasEnoughCurrency = false;
-        if (item.currency === "points") {
-            hasEnoughCurrency = data.points >= item.cost;
-        } else if (item.currency === "silver") {
-            hasEnoughCurrency = data.silver >= item.cost;
-        } else if (item.currency === "gold") {
-            hasEnoughCurrency = data.gold >= item.cost;
-        }
-
-        if (!hasEnoughCurrency) {
-            alert(`Not enough ${item.currency}! You need ${item.cost} ${item.currency} to buy the ${item.name}.`);
-            return;
-        }
-
-        // Koop het item
-        if (item.currency === "points") {
-            data.points -= item.cost;
-        } else if (item.currency === "silver") {
-            data.silver -= item.cost;
-        } else if (item.currency === "gold") {
-            data.gold -= item.cost;
-        }
-
-        // Beloning van item
-        if (item.rewardType === "xp") {
-            data.xp += item.rewardAmount;
-            checkLevelUp(); // Check for level up immediately
-        } else if (item.rewardType === "points") {
-            data.points += item.rewardAmount;
-        } else if (item.rewardType === "gold") {
-            data.gold += item.rewardAmount;
-        } else if (item.rewardType === "silver") {
-            data.silver += item.rewardAmount;
-        }
-        
-        alert(`You bought the ${item.name}! You received ${item.rewardAmount} ${item.rewardType.toUpperCase()}!`);
-        updateUI();
+      let rewardText = "";
+      if (item.rewardType === "xp") { data.xp += item.rewardAmount; checkLevelUp(); rewardText = `${item.rewardAmount} XP`; }
+      else if (item.rewardType === "points") { data.points += item.rewardAmount; rewardText = `${item.rewardAmount} Points`; }
+      else if (item.rewardType === "gold") { data.gold += item.rewardAmount; rewardText = `${item.rewardAmount} Gold`; }
+      else if (item.rewardType === "silver") { data.silver += item.rewardAmount; rewardText = `${item.rewardAmount} Silver`; }
+      showNotification(`Item Purchased: +${rewardText}`, 'quest');
+      updateUI();
     }
 
-
-    // --- Weapon Shop Logica ---
-
     function updateWeaponShopList() {
-        const weaponList = document.getElementById("weaponList");
-        weaponList.innerHTML = "";
-
-        defaultData.shopWeapons.forEach(weapon => { // Gebruik defaultData.shopWeapons voor de volledige lijst
-            const li = document.createElement("li");
-            li.classList.add('weapon-card'); // Toepassen van de kaart-styling class
-            const alreadyOwned = data.ownedWeapons.includes(weapon.id); // Controleer of al in bezit
-
-            let costText = `${weapon.cost} ${weapon.currency}`;
-            
-            li.innerHTML = `
-                <img src="${weapon.icon}" alt="${weapon.name} icon" class="weapon-item-icon">
-                <span class="weapon-card-name">${weapon.name}</span>
-                <span class="weapon-card-rank">Rank: ${ranks[weapon.requiredRank]}</span>
-                <span class="weapon-card-cost">Cost: ${costText}</span>
-                <span class="weapon-card-ability">${weapon.ability}</span>
-            `;
-
-            const buyButton = document.createElement("button");
-            if (alreadyOwned) {
-                buyButton.textContent = "Owned";
-                buyButton.disabled = true;
-                li.classList.add('done'); // Markeer als bezit
-            } else {
-                buyButton.textContent = "Buy";
-                // Bepaal of de speler genoeg valuta heeft EN de vereiste rank heeft
-                const hasEnoughCurrency = (weapon.currency === "silver" && data.silver >= weapon.cost) ||
-                                          (weapon.currency === "gold" && data.gold >= weapon.cost);
-                const hasRequiredRank = data.rank >= weapon.requiredRank;
-
-                buyButton.disabled = !hasEnoughCurrency || !hasRequiredRank; // Knop uitgeschakeld indien geen valuta of rank
-                buyButton.onclick = () => buyWeapon(weapon.id); // Roep buyWeapon functie aan
-            }
-            li.appendChild(buyButton);
-            weaponList.appendChild(li);
-        });
+      const weaponList = document.getElementById("weaponList");
+      weaponList.innerHTML = "";
+      defaultData.shopWeapons.forEach(weapon => {
+        const li = document.createElement("li");
+        li.classList.add('weapon-card');
+        const alreadyOwned = data.ownedWeapons.includes(weapon.id);
+        li.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name} icon" class="weapon-item-icon"><span class="weapon-card-name">${weapon.name}</span><span class="weapon-card-rank">Rank: ${ranks[weapon.requiredRank]}</span><span class="weapon-card-cost">Cost: ${weapon.cost} ${weapon.currency}</span><span class="weapon-card-ability">${weapon.ability}</span>`;
+        const buyButton = document.createElement("button");
+        if (alreadyOwned) {
+          buyButton.textContent = "Owned"; buyButton.disabled = true; li.classList.add('done');
+        } else {
+          buyButton.textContent = "Buy";
+          const hasEnoughCurrency = (weapon.currency === "silver" && data.silver >= weapon.cost) || (weapon.currency === "gold" && data.gold >= weapon.cost);
+          const hasRequiredRank = data.rank >= weapon.requiredRank;
+          buyButton.disabled = !hasEnoughCurrency || !hasRequiredRank;
+          buyButton.onclick = () => buyWeapon(weapon.id);
+        }
+        li.appendChild(buyButton);
+        weaponList.appendChild(li);
+      });
     }
 
     function buyWeapon(weaponId) {
-        const weapon = defaultData.shopWeapons.find(w => w.id === weaponId); // Gebruik defaultData om basis info te krijgen
-        const alreadyOwned = data.ownedWeapons.includes(weaponId);
+      const weapon = defaultData.shopWeapons.find(w => w.id === weaponId);
+      if (!weapon || data.ownedWeapons.includes(weaponId)) { return; }
+      const hasEnoughCurrency = (weapon.currency === "silver" && data.silver >= weapon.cost) || (weapon.currency === "gold" && data.gold >= weapon.cost);
+      const hasRequiredRank = data.rank >= weapon.requiredRank;
+      if (!hasRequiredRank) { showNotification(`Rank ${ranks[weapon.requiredRank]} required.`, 'quest'); return; }
+      if (!hasEnoughCurrency) { showNotification(`Not enough ${weapon.currency}!`, 'quest'); return; }
 
-        if (!weapon || alreadyOwned) {
-            alert("This weapon is not available or already owned.");
-            return;
-        }
+      if (weapon.currency === "silver") { data.silver -= weapon.cost; } else { data.gold -= weapon.cost; }
+      data.ownedWeapons.push(weapon.id);
 
-        // Valuta en rank checks
-        const hasEnoughCurrency = (weapon.currency === "silver" && data.silver >= weapon.cost) ||
-                                  (weapon.currency === "gold" && data.gold >= weapon.cost);
-        const hasRequiredRank = data.rank >= weapon.requiredRank;
-
-        if (!hasRequiredRank) {
-            alert(`You need to be Rank ${ranks[weapon.requiredRank]} or higher to buy the ${weapon.name}.`);
-            return;
-        }
-
-        if (!hasEnoughCurrency) {
-            alert(`Not enough ${weapon.currency}! You need ${weapon.cost} ${weapon.currency} to buy the ${weapon.name}.`);
-            return;
-        }
-
-        // Koop het wapen
-        if (weapon.currency === "silver") {
-            data.silver -= weapon.cost;
-        } else { // gold
-            data.gold -= weapon.cost;
-        }
-        data.ownedWeapons.push(weapon.id); 
-
-        // Beloningen bij aankoop zijn nu NIET voor individuele wapens, enkel voor collectie
-        // alert(`You bought the ${weapon.name}!`); // Alleen koopbevestiging
-
-        // Controleer of alle wapens verzameld zijn
-        if (!data.weaponCollectionCompleted && data.ownedWeapons.length === defaultData.shopWeapons.length) { 
-            data.weaponCollectionCompleted = true;
-            const bonusXP = 2000;    // Zoals besproken
-            const bonusPoints = 500; // Zoals besproken
-            const bonusGold = 100;   // Zoals besproken
-            const bonusSilver = 2000; // Zilver bonus
-            data.xp += bonusXP;
-            data.points += bonusPoints;
-            data.gold += bonusGold;
-            data.silver += bonusSilver; 
-            alert(`CONGRATULATIONS! You have collected ALL weapons! You received a grand bonus of ${bonusXP} XP, ${bonusPoints} Points, ${bonusGold} Gold, and ${bonusSilver} Silver!`);
-        } else {
-             alert(`You bought the ${weapon.name}!`); // Melding ook als collectie niet compleet is
-        }
-
-        checkLevelUp();
-        updateUI();
+      if (!data.weaponCollectionCompleted && data.ownedWeapons.length === defaultData.shopWeapons.length) {
+        data.weaponCollectionCompleted = true;
+        data.xp += 2000; data.points += 500; data.gold += 100; data.silver += 2000;
+        showNotification(`ALL WEAPONS COLLECTED! Grand bonus!`, 'level-up');
+      } else {
+        showNotification(`Weapon Acquired: ${weapon.name}!`, 'quest');
+      }
+      checkLevelUp();
+      updateUI();
     }
-
-    // --- Inventaris Logica ---
 
     function updateInventoryList() {
-        const inventoryList = document.getElementById("inventoryList");
-        inventoryList.innerHTML = "";
-
-        if (data.ownedWeapons.length === 0) {
-            inventoryList.innerHTML = "<li class='panel'>No weapons in your inventory yet. Visit the Weapon Shop!</li>";
-            return;
+      const inventoryList = document.getElementById("inventoryList");
+      inventoryList.innerHTML = "";
+      if (data.ownedWeapons.length === 0) {
+        inventoryList.innerHTML = "<li class='panel' style='cursor:default; opacity: 0.6;'>No weapons in your inventory yet. Visit the Weapon Shop!</li>";
+        return;
+      }
+      data.ownedWeapons.forEach(weaponId => {
+        const weapon = defaultData.shopWeapons.find(w => w.id === weaponId);
+        if (weapon) {
+          const li = document.createElement("li");
+          li.classList.add('weapon-card');
+          li.innerHTML = `<img src="${weapon.icon}" alt="${weapon.name} icon" class="weapon-item-icon"><span class="weapon-card-name">${weapon.name}</span><span class="weapon-card-rank">Rank: ${ranks[weapon.requiredRank]}</span><span class="weapon-card-ability">${weapon.ability}</span>`;
+          inventoryList.appendChild(li);
         }
-
-        data.ownedWeapons.forEach(weaponId => {
-            const weapon = defaultData.shopWeapons.find(w => w.id === weaponId); 
-            if (weapon) {
-                const li = document.createElement("li");
-                li.classList.add('weapon-card'); 
-                li.innerHTML = `
-                    <img src="${weapon.icon}" alt="${weapon.name} icon" class="weapon-item-icon">
-                    <span class="weapon-card-name">${weapon.name}</span>
-                    <span class="weapon-card-rank">Rank: ${ranks[weapon.requiredRank]}</span>
-                    <span class="weapon-card-ability">${weapon.ability}</span>
-                `;
-                inventoryList.appendChild(li);
-            }
-        });
+      });
     }
 
-    // --- Streak Quest Logica ---
-
     function checkStreaks(completedDailyQuestId) {
-        const today = new Date().toDateString();
+      const today = new Date().toDateString();
+      if (completedDailyQuestId === 'brush_teeth_1' || completedDailyQuestId === 'brush_teeth_2') {
+        const brushStreak = data.dailyStreaks['brush_teeth_daily'];
+        if (brushStreak.lastCompletionDate !== today) { updateSingleStreak('brush_teeth_daily', today); }
+      }
+      if (completedDailyQuestId === 'take_meds') { updateSingleStreak('take_meds_daily', today); }
 
-        if (completedDailyQuestId === 'brush_teeth_1' || completedDailyQuestId === 'brush_teeth_2') {
-            const brushStreak = data.dailyStreaks['brush_teeth_daily'];
-            if (brushStreak.lastCompletionDate !== today) {
-                updateSingleStreak('brush_teeth_daily', today);
-            }
+      data.streakQuests.forEach(streakQuest => {
+        if (!streakQuest.done && data.dailyStreaks[streakQuest.parentQuestId] && data.dailyStreaks[streakQuest.parentQuestId].current >= streakQuest.threshold) {
+          streakQuest.done = true;
+          data.xp += streakQuest.xp;
+          data.points += streakQuest.points;
+          data.gold += streakQuest.gold;
+          checkLevelUp();
+          showNotification(`Streak Completed: ${streakQuest.text}!`, 'streak');
         }
-
-        if (completedDailyQuestId === 'take_meds') {
-            updateSingleStreak('take_meds_daily', today);
-        }
-
-        data.streakQuests.forEach(streakQuest => {
-            if (!streakQuest.done && data.dailyStreaks[streakQuest.parentQuestId] && data.dailyStreaks[streakQuest.parentQuestId].current >= streakQuest.threshold) {
-                streakQuest.done = true;
-                data.xp += streakQuest.xp;
-                data.points += streakQuest.points;
-                data.gold += streakQuest.gold;
-                checkLevelUp();
-                alert(`STREAK COMPLETED! You earned a reward for "${streakQuest.text}"! (+${streakQuest.xp} XP / +${streakQuest.points} P / +${streakQuest.gold} Gold)`);
-                console.log(`Streak Quest "${streakQuest.text}" completed!`);
-            }
-        });
+      });
     }
 
     function updateSingleStreak(streakKey, today) {
-        let streak = data.dailyStreaks[streakKey];
-        if (!streak) {
-            streak = { current: 0, lastCompletionDate: null };
-            data.dailyStreaks[streakKey] = streak;
-        }
-
-        const lastDate = streak.lastCompletionDate ? new Date(streak.lastCompletionDate) : null;
-        const currentDate = new Date(today);
-
-        if (lastDate && currentDate.toDateString() === lastDate.toDateString()) {
-            return;
-        }
-
-        if (lastDate && (currentDate.getTime() - lastDate.getTime()) === (24 * 60 * 60 * 1000)) {
-            streak.current++;
-        } else if (lastDate && (currentDate.getTime() - lastDate.getTime()) > (24 * 60 * 60 * 1000)) {
-            streak.current = 1;
-        } else {
-            streak.current = 1;
-        }
-        streak.lastCompletionDate = today;
-        console.log(`${streakKey} streak updated to: ${streak.current}`);
+      let streak = data.dailyStreaks[streakKey];
+      if (!streak) { streak = { current: 0, lastCompletionDate: null }; data.dailyStreaks[streakKey] = streak; }
+      const lastDate = streak.lastCompletionDate ? new Date(streak.lastCompletionDate) : null;
+      const currentDate = new Date(today);
+      if (lastDate && currentDate.toDateString() === lastDate.toDateString()) { return; }
+      if (lastDate && (currentDate.getTime() - lastDate.getTime()) <= (24 * 60 * 60 * 1000)) {
+        streak.current++;
+      } else {
+        streak.current = 1;
+      }
+      streak.lastCompletionDate = today;
     }
-
 
     function saveProgress() {
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'progress.json';
+      a.download = 'solo-leveling-progress.json';
       a.click();
       URL.revokeObjectURL(a.href);
-      console.log("Progress saved to progress.json");
+      showNotification('Progress Saved!', 'quest');
     }
 
     function loadProgress(e) {
       const file = e.target.files[0];
-      if (!file) {
-        return;
-      }
+      if (!file) return;
       const reader = new FileReader();
       reader.onload = (ev) => {
         try {
-          // 1. Maak een NIEUW data object gebaseerd op de actuele (default) structuur.
-          // Dit garandeert dat alle nieuwe velden aanwezig zijn met hun standaardwaarden.
-          let currentSessionData = { ...defaultData }; 
-
           const loadedData = JSON.parse(ev.target.result);
+          let freshData = JSON.parse(JSON.stringify(defaultData));
+          data = { ...freshData, ...loadedData };
+          data.gateStats = { ...freshData.gateStats, ...loadedData.gateStats };
+          data.dailyStreaks = { ...freshData.dailyStreaks, ...loadedData.dailyStreaks };
+          data.activeGates = loadedData.activeGates || [];
 
-          // 2. Overwrite primitieve waarden en directe kopieën van geladen data
-          currentSessionData.level = loadedData.level !== undefined ? loadedData.level : defaultData.level;
-          currentSessionData.xp = loadedData.xp !== undefined ? loadedData.xp : defaultData.xp;
-          currentSessionData.points = loadedData.points !== undefined ? loadedData.points : defaultData.points;
-          currentSessionData.gold = loadedData.gold !== undefined ? loadedData.gold : defaultData.gold;
-          currentSessionData.silver = loadedData.silver !== undefined ? loadedData.silver : defaultData.silver; 
-          currentSessionData.rank = loadedData.rank !== undefined ? loadedData.rank : defaultData.rank;
-          currentSessionData.lastDailyReset = loadedData.lastDailyReset || defaultData.lastDailyReset;
-          currentSessionData.lastSpecialReset = loadedData.lastSpecialReset || defaultData.lastSpecialReset;
-          currentSessionData.weaponCollectionCompleted = loadedData.weaponCollectionCompleted !== undefined ? loadedData.weaponCollectionCompleted : defaultData.weaponCollectionCompleted;
-          currentSessionData.lastPhysicalReset = loadedData.lastPhysicalReset !== undefined ? loadedData.lastPhysicalReset : defaultData.lastPhysicalReset; // Corrected default merge
-
-
-          // 3. Functie om arrays met ID's te mergen: behoud defaults, update state van geladen items
-          // En voeg nieuwe items toe die in de geladen data zitten, maar niet in de defaults (voor backwards compatibility)
-          const mergeArrayItems = (defaultArray, loadedArray, idKey = 'id') => {
-              const merged = defaultArray.map(defaultItem => {
-                  const loadedItem = (loadedArray || []).find(li => li[idKey] === defaultItem[idKey]);
-                  return loadedItem ? { ...defaultItem, ...loadedItem } : defaultItem; 
-              });
-              (loadedArray || []).forEach(loadedItem => { 
-                  if (!merged.some(m => m[idKey] === loadedItem[idKey])) {
-                      merged.push(loadedItem);
-                  }
-              });
-              return merged;
-          };
-
-          currentSessionData.dailyQuests = mergeArrayItems(defaultData.dailyQuests, loadedData.dailyQuests);
-          currentSessionData.dailyPhysicalQuests = mergeArrayItems(defaultData.dailyPhysicalQuests, loadedData.dailyPhysicalQuests);
-          currentSessionData.realLifeRewards = mergeArrayItems(defaultData.realLifeRewards, loadedData.realLifeRewards);
-          currentSessionData.streakQuests = mergeArrayItems(defaultData.streakQuests, loadedData.streakQuests);
-          currentSessionData.shopWeapons = mergeArrayItems(defaultData.shopWeapons, loadedData.shopWeapons);
-          currentSessionData.shopItems = mergeArrayItems(defaultData.shopItems, loadedData.shopItems); 
-
-
-          // 4. Speciale afhandeling voor activeSpecials (worden toch gereset/herkozen)
-          currentSessionData.activeSpecials = loadedData.activeSpecials || []; 
-
-          // 5. Speciale afhandeling voor dailyStreaks objecten
-          currentSessionData.dailyStreaks = { ...defaultData.dailyStreaks }; 
-          if (loadedData.dailyStreaks) {
-              for (const key in defaultData.dailyStreaks) { 
-                  if (loadedData.dailyStreaks[key]) {
-                      currentSessionData.dailyStreaks[key] = {
-                          current: loadedData.dailyStreaks[key].current,
-                          lastCompletionDate: loadedData.dailyStreaks[key].lastCompletionDate
-                      };
-                  }
-              }
-              for (const key in loadedData.dailyStreaks) { 
-                  if (!currentSessionData.dailyStreaks[key]) {
-                      currentSessionData.dailyStreaks[key] = loadedData.dailyStreaks[key];
-                  }
-              }
-          }
-
-          // 6. ownedWeapons kan direct worden overgenomen, want het is een lijst van ID's
-          currentSessionData.ownedWeapons = loadedData.ownedWeapons || [];
-
-
-          // Overwrite het globale data object met het nieuw samengevoegde object
-          data = currentSessionData;
-
-          console.log("Progress successfully loaded!");
+          showNotification('Progress Loaded Successfully!', 'quest');
           performDailyAndSpecialResets(); 
           updateUI(); 
         } catch (error) {
-          alert("Error loading progress: Invalid file or data format. Please select a valid .json file.");
+          alert("Error loading progress: Invalid file or data format.");
           console.error("Loading error:", error);
         }
       };
@@ -1217,64 +1040,37 @@ dailyPhysicalQuests: [
       e.target.value = '';
     }
 
-    // --- Info Table (Rank Upgrades) Logic ---
     function updateRankUpgradeInfoTable() {
-        const generalInfoSection = document.getElementById("generalInfo");
-        if (!generalInfoSection || !generalInfoSection.classList.contains('active')) {
-            return;
-        }
-
         const tableBody = document.getElementById("rankUpgradeInfoTableBody");
         if (!tableBody) return; 
         tableBody.innerHTML = "";
-
         for (let i = 0; i < ranks.length - 1; i++) {
-            const currentRank = ranks[i];
-            const nextRank = ranks[i + 1];
-            const requiredLevel = rankLevelRequirements[i + 1];
-            const pointsCost = getRankUpgradeCost(i + 1);
-
             const row = tableBody.insertRow();
-            row.insertCell().textContent = currentRank;
-            row.insertCell().textContent = nextRank;
-            row.insertCell().textContent = `Level ${requiredLevel}`;
-            row.insertCell().textContent = `${pointsCost} Points`;
+            row.insertCell().textContent = ranks[i];
+            row.insertCell().textContent = ranks[i + 1];
+            row.insertCell().textContent = `Level ${rankLevelRequirements[i + 1]}`;
+            row.insertCell().textContent = `${getRankUpgradeCost(i + 1)} Points`;
         }
     }
 
-
-    // --- Reset Functies ---
-
     function checkDailyReset() {
       const today = new Date().toDateString();
-      // Controleer en reset 'dailyQuests'
       if (data.lastDailyReset !== today) {
         data.dailyQuests.forEach(q => q.done = false);
         data.lastDailyReset = today;
-        console.log("Daily quests have been reset to undone!");
       }
-
-      // NIEUW: Controleer en reset 'dailyPhysicalQuests'
       if (data.lastPhysicalReset !== today) {
         data.dailyPhysicalQuests.forEach(q => q.done = false);
         data.lastPhysicalReset = today;
-        console.log("Daily Physical quests have been reset to undone!");
       }
-        
       for (const key in data.dailyStreaks) {
           const streak = data.dailyStreaks[key];
           if (streak.lastCompletionDate) {
               const lastDate = new Date(streak.lastCompletionDate);
               const currentDate = new Date(today);
               const diffTime = currentDate.getTime() - lastDate.getTime();
-              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
-              if (diffDays > 1) {
-                  streak.current = 0;
-                  console.log(`Streak for ${key} broken. Reset to 0.`);
-              }
-          } else {
-              streak.current = 0;
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              if (diffDays > 1) { streak.current = 0; }
           }
       }
     }
@@ -1282,10 +1078,8 @@ dailyPhysicalQuests: [
     function resetSpecials() {
       const today = new Date();
       const lastSpecialResetDate = new Date(data.lastSpecialReset);
-
-      const diffTime = Math.abs(today.getTime() - lastSpecialResetDate.getTime());
+      const diffTime = Math.abs(today - lastSpecialResetDate);
       const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-
       if (diffDays >= 3 || data.activeSpecials.length === 0) {
         data.activeSpecials = [];
         const availableQuests = [...data.allSpecialQuests];
@@ -1293,39 +1087,37 @@ dailyPhysicalQuests: [
             const j = Math.floor(Math.random() * (i + 1));
             [availableQuests[i], availableQuests[j]] = [availableQuests[j], availableQuests[i]];
         }
-
         for (let i = 0; i < 5; i++) {
           if (availableQuests.length === 0) break;
-          const newQuest = { ...availableQuests.shift(), daysLeft: 3, done: false };
-          data.activeSpecials.push(newQuest);
+          data.activeSpecials.push({ ...availableQuests.shift(), daysLeft: 3, done: false });
         }
-
         data.lastSpecialReset = today.toDateString();
-        console.log("Special quests have been fully reset and 5 new ones selected!");
-
       } else if (diffDays > 0) {
-        data.activeSpecials.forEach(q => {
-          if (!q.done && q.daysLeft > 0) {
-            q.daysLeft -= diffDays;
-          }
-        });
+        data.activeSpecials.forEach(q => { if (!q.done && q.daysLeft > 0) { q.daysLeft -= diffDays; } });
         data.activeSpecials = data.activeSpecials.filter(q => q.daysLeft > 0 || q.done);
-        console.log(`Special quests days left decremented by ${diffDays} day(s).`);
       }
     }
 
     function performDailyAndSpecialResets() {
       checkDailyReset();
       resetSpecials();
+      updateGateTimers();
     }
 
-    // --- Initialisatie ---
+    function showNotification(message, type = 'quest') {
+      const container = document.getElementById('notification-container');
+      const notif = document.createElement('div');
+      notif.className = `notification ${type}`;
+      notif.textContent = message;
+      container.appendChild(notif);
+      setTimeout(() => { notif.remove(); }, 5000);
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById("rank").textContent = ranks[data.rank];
         performDailyAndSpecialResets();
         updateUI(); 
         showPage('status'); 
+        setInterval(updateGateTimers, 1000);
     });
   </script>
 </body>
