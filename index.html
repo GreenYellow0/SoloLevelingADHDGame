@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solo Leveling System</title>
+  <!-- FAVICON TOEGEVOEGD -->
+  <link rel="icon" type="image/png" href="favicon.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
@@ -508,6 +510,7 @@
         { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
         { id: 'take_meds', text: "Take meds (in less than 10 min)", xp: 15, points: 3, done: false },
         { id: 'limit_pmo', text: "Stay under 1.5h PMO total today", xp: 25, points: 10, done: false }, 
+        { id: 'sleep_meds', text: "Take sleeping meds before 2:30AM", xp: 25, points: 10, gold: 1, done: false }, // NIEUWE QUEST
         { id: 'fresh_air', text: "Get fresh air (5 min outside or near window)", xp: 10, points: 3, done: false }, 
         { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 5, done: false }, 
         { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 5, done: false },
@@ -541,17 +544,35 @@
       lastPhysicalReset: new Date().toDateString(),
       dailyStreaks: {
         'brush_teeth_daily': { current: 0, lastCompletionDate: null },
-        'take_meds_daily': { current: 0, lastCompletionDate: null }
+        'take_meds_daily': { current: 0, lastCompletionDate: null },
+        'sleep_meds_daily': { current: 0, lastCompletionDate: null }, // NIEUWE STREAK TRACKER
+        'limit_pmo_daily': { current: 0, lastCompletionDate: null }   // NIEUWE STREAK TRACKER
       },
       streakQuests: [
+        // Brush Teeth Streaks
         { id: 'brush_7_days', parentQuestId: 'brush_teeth_daily', threshold: 7, text: "Brush teeth 7 days in a row", xp: 500, points: 100, gold: 5, done: false },
         { id: 'brush_14_days', parentQuestId: 'brush_teeth_daily', threshold: 14, text: "Brush teeth 10 days in a row", xp: 1000, points: 200, gold: 10, done: false },
         { id: 'brush_30_days', parentQuestId: 'brush_teeth_daily', threshold: 30, text: "Brush teeth 1 month in a row", xp: 2500, points: 500, gold: 25, done: false },
+        // Take Meds Streaks
         { id: 'meds_2_days', parentQuestId: 'take_meds_daily', threshold: 2, text: "Took meds 2 days in a row", xp: 150, points: 30, gold: 2, done: false },
         { id: 'meds_4_days', parentQuestId: 'take_meds_daily', threshold: 4, text: "Took meds 4 days in a row", xp: 300, points: 60, gold: 4, done: false },
         { id: 'meds_7_days', parentQuestId: 'take_meds_daily', threshold: 7, text: "Took meds 1 week in a row", xp: 600, points: 120, gold: 8, done: false },
         { id: 'meds_14_days', parentQuestId: 'take_meds_daily', threshold: 14, text: "Took meds 2 weeks in a row", xp: 1200, points: 240, gold: 15, done: false },
-        { id: 'meds_30_days', parentQuestId: 'take_meds_daily', threshold: 30, text: "Took meds 1 month in a row", xp: 3000, points: 600, gold: 30, done: false }
+        { id: 'meds_30_days', parentQuestId: 'take_meds_daily', threshold: 30, text: "Took meds 1 month in a row", xp: 3000, points: 600, gold: 30, done: false },
+        // NIEUWE SLEEPING MEDS STREAKS
+        { id: 'sleep_meds_2_days', parentQuestId: 'sleep_meds_daily', threshold: 2, text: "Take sleeping meds 2 days in a row", xp: 150, points: 30, gold: 2, done: false },
+        { id: 'sleep_meds_5_days', parentQuestId: 'sleep_meds_daily', threshold: 5, text: "Take sleeping meds 5 days in a row", xp: 300, points: 70, gold: 5, done: false },
+        { id: 'sleep_meds_7_days', parentQuestId: 'sleep_meds_daily', threshold: 7, text: "Take sleeping meds 1 week in a row", xp: 500, points: 80, gold: 7, done: false },
+        { id: 'sleep_meds_14_days', parentQuestId: 'sleep_meds_daily', threshold: 14, text: "Take sleeping meds 2 weeks in a row", xp: 800, points: 250, gold: 15, done: false },
+        { id: 'sleep_meds_21_days', parentQuestId: 'sleep_meds_daily', threshold: 21, text: "Take sleeping meds 3 weeks in a row", xp: 1250, points: 350, gold: 25, done: false },
+        { id: 'sleep_meds_30_days', parentQuestId: 'sleep_meds_daily', threshold: 30, text: "Take sleeping meds 1 month in a row", xp: 2000, points: 500, gold: 50, done: false },
+        // NIEUWE PMO STREAKS
+        { id: 'pmo_2_days', parentQuestId: 'limit_pmo_daily', threshold: 2, text: "Stay under 1.5h PMO 2 days in a row", xp: 200, points: 40, gold: 2, done: false },
+        { id: 'pmo_5_days', parentQuestId: 'limit_pmo_daily', threshold: 5, text: "Stay under 1.5h PMO 5 days in a row", xp: 500, points: 100, gold: 5, done: false },
+        { id: 'pmo_7_days', parentQuestId: 'limit_pmo_daily', threshold: 7, text: "Stay under 1.5h PMO 1 week in a row", xp: 900, points: 180, gold: 10, done: false },
+        { id: 'pmo_14_days', parentQuestId: 'limit_pmo_daily', threshold: 14, text: "Stay under 1.5h PMO 2 weeks in a row", xp: 1600, points: 350, gold: 20, done: false },
+        { id: 'pmo_21_days', parentQuestId: 'limit_pmo_daily', threshold: 21, text: "Stay under 1.5h PMO 3 weeks in a row", xp: 2400, points: 500, gold: 35, done: false },
+        { id: 'pmo_30_days', parentQuestId: 'limit_pmo_daily', threshold: 30, text: "Stay under 1.5h PMO 1 month in a row", xp: 3500, points: 800, gold: 60, done: false }
       ],
       shopWeapons: [
         { id: 'wooden_sword', name: "Wooden Sword", cost: 50, currency: "silver", requiredRank: 0, icon: 'images/weapon_wood_sword_icon.png', ability: "A simple sword. Use it wisely." },
@@ -597,7 +618,11 @@
       dList.innerHTML = "";
       data.dailyQuests.forEach((q, i) => {
         const li = document.createElement("li");
-        li.textContent = `${q.text} (+${q.xp} XP / +${q.points}P)`;
+        let rewardText = `+${q.xp} XP / +${q.points}P`;
+        if (q.gold) {
+            rewardText += ` / +${q.gold} Gold`;
+        }
+        li.textContent = `${q.text} (${rewardText})`;
         if (q.done) { li.classList.add('done'); } else { li.onclick = () => openModal("daily", i); }
         dList.appendChild(li);
       });
@@ -677,10 +702,15 @@
           q.done = true;
           const xpGained = Math.floor(q.xp * rankMultiplier[data.rank]);
           const pointsGained = Math.floor(q.points * rankMultiplier[data.rank]);
+          const goldGained = q.gold ? Math.floor(q.gold * rankMultiplier[data.rank]) : 0;
+          
           data.xp += xpGained;
           data.points += pointsGained;
+          if(goldGained > 0) data.gold += goldGained;
           
-          showNotification(`Quest Completed! +${xpGained} XP & +${pointsGained} Points`, 'quest');
+          let rewardString = `+${xpGained} XP & +${pointsGained} Points`;
+          if(goldGained > 0) rewardString += ` & +${goldGained} Gold`;
+          showNotification(`Quest Completed! ${rewardString}`, 'quest');
 
           checkLevelUp();
           if (currentQuestType === "daily") { checkStreaks(q.id); }
@@ -972,23 +1002,35 @@
     }
 
     function checkStreaks(completedDailyQuestId) {
-      const today = new Date().toDateString();
-      if (completedDailyQuestId === 'brush_teeth_1' || completedDailyQuestId === 'brush_teeth_2') {
-        const brushStreak = data.dailyStreaks['brush_teeth_daily'];
-        if (brushStreak.lastCompletionDate !== today) { updateSingleStreak('brush_teeth_daily', today); }
-      }
-      if (completedDailyQuestId === 'take_meds') { updateSingleStreak('take_meds_daily', today); }
+        const today = new Date().toDateString();
+        
+        const questToStreakMap = {
+            'brush_teeth_1': 'brush_teeth_daily',
+            'brush_teeth_2': 'brush_teeth_daily',
+            'take_meds': 'take_meds_daily',
+            'sleep_meds': 'sleep_meds_daily',
+            'limit_pmo': 'limit_pmo_daily'
+        };
 
-      data.streakQuests.forEach(streakQuest => {
-        if (!streakQuest.done && data.dailyStreaks[streakQuest.parentQuestId] && data.dailyStreaks[streakQuest.parentQuestId].current >= streakQuest.threshold) {
-          streakQuest.done = true;
-          data.xp += streakQuest.xp;
-          data.points += streakQuest.points;
-          data.gold += streakQuest.gold;
-          checkLevelUp();
-          showNotification(`Streak Completed: ${streakQuest.text}!`, 'streak');
+        const streakKey = questToStreakMap[completedDailyQuestId];
+
+        if (streakKey) {
+            const streak = data.dailyStreaks[streakKey];
+            if (streak.lastCompletionDate !== today) {
+                updateSingleStreak(streakKey, today);
+            }
         }
-      });
+
+        data.streakQuests.forEach(streakQuest => {
+            if (!streakQuest.done && data.dailyStreaks[streakQuest.parentQuestId] && data.dailyStreaks[streakQuest.parentQuestId].current >= streakQuest.threshold) {
+                streakQuest.done = true;
+                data.xp += streakQuest.xp;
+                data.points += streakQuest.points;
+                data.gold += streakQuest.gold;
+                checkLevelUp();
+                showNotification(`Streak Completed: ${streakQuest.text}!`, 'streak');
+            }
+        });
     }
 
     function updateSingleStreak(streakKey, today) {
