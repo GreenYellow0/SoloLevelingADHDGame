@@ -574,16 +574,54 @@
         { id: 'pmo_21_days', parentQuestId: 'limit_pmo_daily', threshold: 21, text: "Stay under 1.5h PMO 3 weeks in a row", xp: 2400, points: 500, gold: 35, done: false },
         { id: 'pmo_30_days', parentQuestId: 'limit_pmo_daily', threshold: 30, text: "Stay under 1.5h PMO 1 month in a row", xp: 3500, points: 800, gold: 60, done: false }
       ],
-      shopWeapons: [
-        { id: 'wooden_sword', name: "Wooden Sword", cost: 50, currency: "silver", requiredRank: 0, icon: 'images/weapon_wood_sword_icon.png', ability: "A simple sword. Use it wisely." },
-        { id: 'stone_dagger', name: "Stone Dagger", cost: 100, currency: "silver", requiredRank: 1, icon: 'images/weapon_stone_dagger_icon.png', ability: "A rough blade. Good for quick work." },
-        { id: 'copper_spear', name: "Copper Spear", cost: 200, currency: "silver", requiredRank: 2, icon: 'images/weapon_copper_spear_icon.png', ability: "A basic spear. Offers decent reach." },
-        { id: 'iron_axe', name: "Iron Axe", cost: 400, currency: "silver", requiredRank: 3, icon: 'images/weapon_iron_axe_icon.png', ability: "A sturdy axe. Great for chopping tasks." },
-        { id: 'steel_sword', name: "Steel Sword", cost: 5, currency: "gold", requiredRank: 4, icon: 'images/weapon_steel_sword_icon.png', ability: "A balanced sword. A true adventurer's companion." },
-        { id: 'silver_bow', name: "Silver Bow", cost: 10, currency: "gold", requiredRank: 5, icon: 'images/weapon_silver_bow_icon.png', ability: "An elegant bow. For precise strikes." },
-        { id: 'mythril_staff', name: "Mythril Staff", cost: 20, currency: "gold", requiredRank: 6, icon: 'images/weapon_mythril_staff_icon.png', ability: "A magical staff. Channels inner power." },
-        { id: 'dragon_blade', name: "Dragon Blade", cost: 40, currency: "gold", requiredRank: 7, icon: 'images/weapon_dragon_blade_icon.png', ability: "Forged from dragon scales. The ultimate challenge awaits!" }
-      ],
+shopWeapons: [
+  // F‑Rank (requiredRank: 0)
+  { id: 'orcs_broadsword', name: "Orc's Broadsword", cost: 30, currency: "silver", requiredRank: 0, icon: 'GSWeapon_OrcGreatSword.png', ability: "Heavy and rusty. Better than bare hands." },
+  { id: 'lizard_glaive', name: "Lizard Glaive", cost: 35, currency: "silver", requiredRank: 0, icon: 'GSWeapon_LizardGlaive.png', ability: "Crooked shaft, dull tip. Still reaches." },
+  { id: 'grave_keepers_scythe', name: "Grave Keeper's Scythe", cost: 40, currency: "silver", requiredRank: 0, icon: 'GSWeapon_GravekeeperScythe.png', ability: "Old and chipped. A gravekeeper still used it." },
+
+  // E‑Rank (requiredRank: 1)
+  { id: 'ice_elfs_bow', name: "Ice Elf's Bow", cost: 60, currency: "silver", requiredRank: 1, icon: 'GSWeapon_IceElfBow.png', ability: "Wild tension, poor accuracy—but it shoots." },
+  { id: 'rock_golem_hammer', name: "Rock Golem Hammer", cost: 65, currency: "silver", requiredRank: 1, icon: 'GSWeapon_StoneGolemHammer.png', ability: "Heavy club made from cracked stone." },
+  { id: 'sandstorm_cube', name: "Sandstorm Cube", cost: 70, currency: "silver", requiredRank: 1, icon: 'GSWeapon_SandCentipedeCube.png', ability: "Weird artifact that rattles when you swing." },
+
+  // D‑Rank (requiredRank: 2)
+  { id: 'arachnids_hand_crossbow', name: "Arachnid's Hand Crossbow", cost: 90, currency: "silver", requiredRank: 2, icon: 'GSWeapon_GiantArachne_01.png', ability: "Light crossbow—shoots fast, not far." },
+  { id: 'frostbite_falchion', name: "Frostbite Falchion", cost: 95, currency: "silver", requiredRank: 2, icon: 'GSWeapon_FrostIceSword.png', ability: "Cold blade that chills the air." },
+  { id: 'dragonscale_broadsword', name: "Dragonscale Broadsword", cost: 100, currency: "silver", requiredRank: 2, icon: 'GSWeapon_DragnScaleGreatBlade.png', ability: "Scaled edge with minor sparkle." },
+
+  // C‑Rank (requiredRank: 3)
+  { id: 'lustrous_dragon_sword', name: "Lustrous Dragon Sword", cost: 150, currency: "silver", requiredRank: 3, icon: 'GSWeapon_Lustrous_Dragon_Sword.png', ability: "A bright steel edge said to inspire awe." },
+  { id: 'knights_sword', name: "Knight's Sword", cost: 160, currency: "silver", requiredRank: 3, icon: 'GSWeapon_KnightSword.png', ability: "Reliable blade for fledgling fighters." },
+
+  // B‑Rank (requiredRank: 4)
+  { id: 'west_wind', name: "West Wind", cost: 180, currency: "gold", requiredRank: 4, icon: 'GSWeapon_Westwind.png', ability: "Swift as the wind—light and nimble." },
+  { id: 'kim_sangshiks_sword', name: "Kim Sangshik's Sword", cost: 185, currency: "gold", requiredRank: 4, icon: 'GSWeapon_KimSangShik_01.png', ability: "Blade with a subtle personal touch." },
+
+  // A‑Rank (requiredRank: 5)
+  { id: 'juicy_grilled_skewer', name: "Juicy Grilled Skewer", cost: 220, currency: "gold", requiredRank: 5, icon: 'skewer.png', ability: "Oddly satisfying to swing." },
+  { id: 'radiru_family_longbow', name: "Radiru Family's Longbow", cost: 230, currency: "gold", requiredRank: 5, icon: 'GSWeapon_RadiruGreatBow_01.png', ability: "Crafted for long-range precision." },
+  { id: 'orb_of_avarice', name: "Orb of Avarice", cost: 240, currency: "gold", requiredRank: 5, icon: 'GSWeapon_OrbofAvarice.png', ability: "Heavy orb that hums greedily." },
+
+  // S‑Rank (requiredRank: 6)
+  { id: 'demon_kings_longsword', name: "Demon King’s Longsword", cost: 300, currency: "gold", requiredRank: 6, icon: 'GSWeapon_DemonKingLongSword_01.png', ability: "Heavy blade forged in ancient dark fires." },
+  { id: 'zekes_fragment', name: "Zeke's Fragment", cost: 310, currency: "gold", requiredRank: 6, icon: 'zeke.png', ability: "Shattered gem glowing with latent power." },
+
+  // S+‑Rank (requiredRank: 7)
+  { id: 'winter_fang', name: "Winter Fang", cost: 350, currency: "gold", requiredRank: 7, icon: 'weapon_winter.png', ability: "Icy edge that freezes the breath around it." },
+  { id: 'stormbringer', name: "Stormbringer", cost: 360, currency: "gold", requiredRank: 7, icon: 'weapon_stormbringer.png', ability: "Crackling blade that channels storms." },
+
+  // S++‑Rank (requiredRank: 8)
+  { id: 'phoenix_soul', name: "Phoenix Soul", cost: 400, currency: "gold", requiredRank: 8, icon: 'phe_icon.png', ability: "Blazing aura in a slender form—a living fire." },
+  { id: 'thethis_grimoire', name: "Thethis' Grimoire", cost: 410, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Tethis_01.png', ability: "Ancient tome of unknown incantations." },
+  { id: 'moonshadow', name: "Moonshadow", cost: 420, currency: "gold", requiredRank: 8, icon: 'GSWeapon_MoonShadow.png', ability: "Stealth blade wreathed in lunar mist." },
+  { id: 'demonic_plum_flower_sword', name: "Demonic Plum Flower Sword", cost: 430, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Demonic_Plum_Flower_Sword.png', ability: "Elegant and deadly, petal-blade forged in hell." },
+  { id: 'demon_kings_daggers', name: "Demon King's Daggers", cost: 440, currency: "gold", requiredRank: 8, icon: 'GSWeapon_DemonKingsDaggers.png', ability: "Twin daggers that thirst for blood." },
+  { id: 'truth_kasakas_venom_fang', name: "Truth: Kasaka's Venom Fang", cost: 490, currency: "gold", requiredRank: 8, icon: 'weapon_truth.png', ability: "Venom-laced blade that whispers death." },
+  { id: 'vulcans_rage', name: "Vulcan's Rage", cost: 500, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Vulcan.png', ability: "Inferno-forged weapon that burns through the soul." },
+  { id: 'skadi', name: "Skadi", cost: 530, currency: "gold", requiredRank: 8, icon: 'skadi_weapon.png', ability: "Chilling spear of frost and fate." },
+  { id: 'the_huntsman', name: "The Huntsman", cost: 540, currency: "gold", requiredRank: 8, icon: 'GSWeapon_TheHuntsman.png', ability: "A hunter’s edge: silent, sharp, merciless." }
+],
       shopItems: [
         { id: 'diamond_item', name: "Diamond", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'Diament.png', ability: "Converts 100 Points into 1 Gold." },
         { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'ManaCrystal.png', ability: "Converts 10 Points into 50 Silver." },
