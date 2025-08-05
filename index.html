@@ -197,6 +197,19 @@
     .trade-card button:hover:not(:disabled) { background: var(--system-blue); color: #fff; }
     .trade-card button:disabled { opacity: 0.5; cursor: not-allowed; }
 
+    /* --- MINING PAGE --- */
+    #mining-container { text-align: center; }
+    #mining-container p { color: var(--text-secondary); }
+    #mining-timer-display, #mining-reward-display { font-size: 2em; font-weight: bold; color: var(--system-blue-light); margin: 20px 0; }
+    #mining-start-btn, #mining-claim-btn {
+        font-family: 'Montserrat', sans-serif; background: var(--system-blue);
+        color: #fff; border: none; padding: 15px 30px; font-weight: 700;
+        cursor: pointer; margin: 5px; transition: all 0.2s ease;
+        font-size: 1.2em; border-radius: 4px;
+    }
+    #mining-start-btn:hover, #mining-claim-btn:hover { background: var(--system-blue-light); color: var(--bg-dark); }
+    #mining-start-btn:disabled { background: #555; cursor: not-allowed; }
+
     /* --- STATUS PAGINA --- */
     .status-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 20px; text-align: center; }
     .status-main-stats { grid-column: 1 / -1; display: flex; justify-content: space-around; align-items: center; padding: 20px; background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border-color); }
@@ -265,7 +278,8 @@
     <button onclick="showPage('status')">Status</button>
     <button onclick="showPage('quests')">Quests</button>
     <button onclick="showPage('gate')">Gate</button>
-    <button onclick="showPage('tradingPost')">Trading Post</button> <!-- NIEUWE KNOP -->
+    <button onclick="showPage('mining')">Mining</button>
+    <button onclick="showPage('tradingPost')">Trading Post</button>
     <button onclick="showPage('shop')">Shop</button>
     <button onclick="showPage('inventory')">Inventory</button>
     <button onclick="showPage('generalInfo')">Info</button>
@@ -312,14 +326,21 @@
     <ul id="gate-log-list"></ul>
   </div>
 
-  <!-- NIEUWE TRADING POST PAGINA -->
+  <div id="mining" class="section">
+    <h2>Mana Crystal Mine</h2>
+    <div class="panel">
+        <div id="mining-container">
+            <p>Start mining to find Low-tier Mana Crystals. The process takes a random amount of time.</p>
+            <div id="mining-action-area"></div>
+        </div>
+    </div>
+  </div>
+
   <div id="tradingPost" class="section">
     <h2>Trading Post</h2>
     <div class="panel">
         <p>Exchange items found in gates for valuable rewards.</p>
-        <div id="trading-post-container">
-            <!-- Trading cards will be generated here -->
-        </div>
+        <div id="trading-post-container"></div>
     </div>
   </div>
 
@@ -521,8 +542,9 @@
       level: 1, xp: 0, points: 0, gold: 0, silver: 0, rank: 0,
       activeGates: [],
       gateStats: { accepted: 0, declined: 0 },
-      gateLog: [], // NEW
-      craftingItems: { 'low_mana_crystal': 0, 'enhancement_gear': 0, 'marks_of_time': 0, 'design': 0 }, // NEW
+      gateLog: [],
+      craftingItems: { 'low_mana_crystal': 0, 'enhancement_gear': 0, 'marks_of_time': 0, 'design': 0 },
+      miningState: { isMining: false, endTime: 0 },
       dailyQuests: [
         { id: 'brush_teeth_1', text: "Brush teeth (morning)", xp: 10, points: 2, done: false },
         { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
@@ -712,6 +734,7 @@
       updateRankUpgradeInfoTable();
       updateGatePage();
       updateTradingPost();
+      updateMiningPage();
     }
 
     function openModal(type, index) {
@@ -911,7 +934,7 @@
             result: result,
             rewards: result === 'Cleared' ? { xp: gate.xp, points: gate.points, gold: gate.gold } : null
         };
-        data.gateLog.unshift(logEntry); // Add to the beginning of the array
+        data.gateLog.unshift(logEntry);
     }
 
     function updateCodex() {
@@ -941,31 +964,21 @@
     }
 
     function generateGateDrops(rankIndex) {
-        // Define drop pools and weights
         const dropPools = {
             common: ['low_mana_crystal', 'design'],
             uncommon: ['enhancement_gear'],
             rare: ['marks_of_time']
         };
         const weights = {
-            // Rank: [common%, uncommon%, rare%]
-            0: [80, 19, 1], // F
-            1: [75, 23, 2], // E
-            2: [70, 25, 5], // D
-            3: [65, 28, 7], // C
-            4: [60, 30, 10], // B
-            5: [55, 33, 12], // A
-            6: [50, 35, 15], // S
-            7: [45, 35, 20], // S+
-            8: [40, 35, 25]  // S++
+            0: [80, 19, 1], 1: [75, 23, 2], 2: [70, 25, 5], 3: [65, 28, 7],
+            4: [60, 30, 10], 5: [55, 33, 12], 6: [50, 35, 15], 7: [45, 35, 20], 8: [40, 35, 25]
         };
 
         const currentWeights = weights[rankIndex] || weights[0];
         
-        // Determine number of drops
-        let numDrops = 1 + Math.floor(Math.random() * (rankIndex / 2 + 1)); // More drops at higher ranks
-        if (Math.random() < 0.05) numDrops = 5; // 5% chance for a jackpot of 5 items
-        numDrops = Math.min(numDrops, 5); // Cap at 5
+        let numDrops = 1 + Math.floor(Math.random() * (rankIndex / 2 + 1));
+        if (Math.random() < 0.05) numDrops = 5;
+        numDrops = Math.min(numDrops, 5);
 
         const drops = {};
         for (let i = 0; i < numDrops; i++) {
@@ -1018,18 +1031,9 @@
         const input = document.getElementById(`trade-input-${itemId}`);
         const amount = parseInt(input.value, 10);
 
-        if (isNaN(amount) || amount <= 0) {
-            showNotification("Please enter a valid amount.", 'quest');
-            return;
-        }
-        if (amount > data.craftingItems[itemId]) {
-            showNotification("You don't have enough items.", 'quest');
-            return;
-        }
-        if (amount % needed !== 0) {
-            showNotification(`Amount must be a multiple of ${needed}.`, 'quest');
-            return;
-        }
+        if (isNaN(amount) || amount <= 0) { showNotification("Please enter a valid amount.", 'quest'); return; }
+        if (amount > data.craftingItems[itemId]) { showNotification("You don't have enough items.", 'quest'); return; }
+        if (amount % needed !== 0) { showNotification(`Amount must be a multiple of ${needed}.`, 'quest'); return; }
 
         data.craftingItems[itemId] -= amount;
         const transactions = amount / needed;
@@ -1045,6 +1049,52 @@
         showNotification(`Trade successful! ${rewardText}`, 'level-up');
         input.value = '';
         checkLevelUp();
+        updateUI();
+    }
+
+    function updateMiningPage() {
+        const container = document.getElementById('mining-action-area');
+        const now = Date.now();
+
+        if (data.miningState.isMining) {
+            if (now >= data.miningState.endTime) {
+                container.innerHTML = `
+                    <div id="mining-reward-display">Mining Complete!</div>
+                    <button id="mining-claim-btn" onclick="claimMiningReward()">Claim Reward</button>
+                `;
+            } else {
+                const timeLeft = data.miningState.endTime - now;
+                const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                const seconds = Math.floor((timeLeft / 1000) % 60);
+                container.innerHTML = `
+                    <div id="mining-timer-display">Mining in progress...</div>
+                    <div id="mining-timer-display">${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</div>
+                `;
+            }
+        } else {
+            container.innerHTML = '<button id="mining-start-btn" onclick="startMining()">Start Mining</button>';
+        }
+    }
+
+    function startMining() {
+        const durationMinutes = Math.random() * 8 + 2; // 2 to 10 minutes
+        const durationMilliseconds = durationMinutes * 60 * 1000;
+        
+        data.miningState.isMining = true;
+        data.miningState.endTime = Date.now() + durationMilliseconds;
+
+        showNotification(`Mining started! It will take around ${Math.round(durationMinutes)} minutes.`, 'quest');
+        updateUI();
+    }
+
+    function claimMiningReward() {
+        const amount = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+        data.craftingItems.low_mana_crystal += amount;
+        
+        data.miningState.isMining = false;
+        data.miningState.endTime = 0;
+
+        showNotification(`You found ${amount}x Low-tier Mana Crystal!`, 'level-up');
         updateUI();
     }
 
@@ -1263,6 +1313,7 @@
           data.activeGates = loadedData.activeGates || [];
           data.gateLog = loadedData.gateLog || [];
           data.craftingItems = { ...freshData.craftingItems, ...loadedData.craftingItems };
+          data.miningState = { ...freshData.miningState, ...loadedData.miningState };
 
           showNotification('Progress Loaded Successfully!', 'quest');
           performDailyAndSpecialResets(); 
@@ -1356,7 +1407,12 @@
         performDailyAndSpecialResets();
         updateUI(); 
         showPage('status'); 
-        setInterval(updateGateTimers, 1000);
+        setInterval(() => {
+            updateGateTimers();
+            if (data.miningState.isMining) {
+                updateMiningPage();
+            }
+        }, 1000);
     });
   </script>
 </body>
