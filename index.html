@@ -553,7 +553,7 @@
       activeGates: [],
       gateStats: { accepted: 0, declined: 0 },
       gateLog: [],
-      craftingItems: { 'low_mana_crystal': 0, 'enhancement_gear': 0, 'marks_of_time': 0, 'design': 0 },
+      craftingItems: { 'low_mana_crystal': 0, 'enhancement_gear': 0, 'marks_of_time': 0, 'design': 0, 'dark_mana_crystal': 0 },
       safeMiningState: { isMining: false, endTime: 0 },
       highRiskMiningState: { isMining: false, endTime: 0 },
       dailyQuests: [
@@ -1018,6 +1018,7 @@
 
         const tradeOptions = [
             { id: 'low_mana_crystal', name: 'Low-tier Mana Crystal', icon: 'ManaCrystal.png', needed: 3, reward: '+150 Silver' },
+            { id: 'dark_mana_crystal', name: 'Dark Mana Crystal', icon: 'Dark-Mana-Crystal.png', needed: 3, reward: '+100 Points' },
             { id: 'enhancement_gear', name: 'Weapon Enhancement Gear I', icon: 'WeaponEnhandcementGear.png', needed: 2, reward: '+25 XP' },
             { id: 'marks_of_time', name: 'Marks of Time', icon: 'MarksOfTime.png', needed: 3, reward: '+1 Gold' },
             { id: 'design', name: 'Design', icon: 'Design.png', needed: 5, reward: '+300 Silver' }
@@ -1052,6 +1053,7 @@
         let rewardText = "";
         switch (itemId) {
             case 'low_mana_crystal': data.silver += 150 * transactions; rewardText = `+${150 * transactions} Silver`; break;
+            case 'dark_mana_crystal': data.points += 100 * transactions; rewardText = `+${100 * transactions} Points`; break;
             case 'enhancement_gear': data.xp += 25 * transactions; rewardText = `+${25 * transactions} XP`; break;
             case 'marks_of_time': data.gold += 1 * transactions; rewardText = `+${1 * transactions} Gold`; break;
             case 'design': data.silver += 300 * transactions; rewardText = `+${300 * transactions} Silver`; break;
@@ -1134,13 +1136,24 @@
             data.safeMiningState.endTime = 0;
             showNotification(`You found ${amount}x Low-tier Mana Crystal!`, 'level-up');
         } else if (type === 'highRisk') {
-            const chance = Math.random(); // Get a number between 0 and 1
+            const chance = Math.random();
             if (chance < 0.25) { // 25% chance of failure
                 showNotification("Mining failed! The mana fluctuations were too unstable and you were forced to retreat empty-handed.", 'fail');
             } else { // 75% chance of success
                 const amount = Math.floor(Math.random() * 6) + 5; // 5 to 10 crystals
                 data.craftingItems.low_mana_crystal += amount;
-                showNotification(`Success! You extracted ${amount}x Low-tier Mana Crystals from the volatile mine!`, 'level-up');
+                
+                let notificationText = `Success! You extracted ${amount}x Low-tier Mana Crystals`;
+
+                // Additional chance for Dark Mana Crystals
+                if (Math.random() < 0.5) { // 50% chance to also find dark crystals
+                    const darkAmount = Math.floor(Math.random() * 5) + 1; // 1 to 5 dark crystals
+                    data.craftingItems.dark_mana_crystal += darkAmount;
+                    notificationText += ` and ${darkAmount}x Dark Mana Crystal!`;
+                } else {
+                    notificationText += `!`;
+                }
+                showNotification(notificationText, 'level-up');
             }
             data.highRiskMiningState.isMining = false;
             data.highRiskMiningState.endTime = 0;
