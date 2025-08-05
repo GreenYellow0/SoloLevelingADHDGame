@@ -17,6 +17,7 @@
       --glow-color: rgba(0, 132, 255, 0.4);
       --notification-quest: rgba(0, 132, 255, 0.85);
       --notification-levelup: rgba(255, 215, 0, 0.85);
+      --notification-fail: rgba(220, 53, 69, 0.85);
       --text-primary: #EAEAEA;
       --text-secondary: #A0A0B0;
       --xp-fill: var(--system-blue);
@@ -198,17 +199,17 @@
     .trade-card button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* --- MINING PAGE --- */
-    #mining-container { text-align: center; }
-    #mining-container p { color: var(--text-secondary); }
-    #mining-timer-display, #mining-reward-display { font-size: 2em; font-weight: bold; color: var(--system-blue-light); margin: 20px 0; }
-    #mining-start-btn, #mining-claim-btn {
+    .mining-area { text-align: center; }
+    .mining-area p { color: var(--text-secondary); }
+    .mining-timer-display, .mining-reward-display { font-size: 2em; font-weight: bold; color: var(--system-blue-light); margin: 20px 0; }
+    .mining-start-btn, .mining-claim-btn {
         font-family: 'Montserrat', sans-serif; background: var(--system-blue);
         color: #fff; border: none; padding: 15px 30px; font-weight: 700;
         cursor: pointer; margin: 5px; transition: all 0.2s ease;
         font-size: 1.2em; border-radius: 4px;
     }
-    #mining-start-btn:hover, #mining-claim-btn:hover { background: var(--system-blue-light); color: var(--bg-dark); }
-    #mining-start-btn:disabled { background: #555; cursor: not-allowed; }
+    .mining-start-btn:hover, .mining-claim-btn:hover { background: var(--system-blue-light); color: var(--bg-dark); }
+    .mining-start-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
 
     /* --- STATUS PAGINA --- */
     .status-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 20px; text-align: center; }
@@ -266,6 +267,7 @@
     .notification.quest { background-color: var(--notification-quest); border-color: var(--system-blue-light); }
     .notification.level-up { background-color: rgba(255, 215, 0, 0.85); border-color: #FFD700; text-shadow: 0 0 5px #000; }
     .notification.streak { background: linear-gradient(45deg, #FFD700, #F0B400); border-color: #fff; text-shadow: 0 0 5px #000; }
+    .notification.fail { background-color: var(--notification-fail); border-color: #dc3545; }
     @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; transform: translateX(10%); } }
   </style>
@@ -329,9 +331,17 @@
   <div id="mining" class="section">
     <h2>Mana Crystal Mine</h2>
     <div class="panel">
-        <div id="mining-container">
-            <p>Start mining to find Low-tier Mana Crystals. The process takes a random amount of time.</p>
-            <div id="mining-action-area"></div>
+        <div class="mining-area">
+            <h3>Safe Mine</h3>
+            <p>A reliable source of crystals. The yield is small, but guaranteed.</p>
+            <div id="safe-mining-action-area"></div>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="mining-area">
+            <h3>High-Risk Mine</h3>
+            <p>A volatile mine. High risk, high reward. 25% chance of failure.</p>
+            <div id="high-risk-mining-action-area"></div>
         </div>
     </div>
   </div>
@@ -544,7 +554,8 @@
       gateStats: { accepted: 0, declined: 0 },
       gateLog: [],
       craftingItems: { 'low_mana_crystal': 0, 'enhancement_gear': 0, 'marks_of_time': 0, 'design': 0 },
-      miningState: { isMining: false, endTime: 0 },
+      safeMiningState: { isMining: false, endTime: 0 },
+      highRiskMiningState: { isMining: false, endTime: 0 },
       dailyQuests: [
         { id: 'brush_teeth_1', text: "Brush teeth (morning)", xp: 10, points: 2, done: false },
         { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
@@ -1053,48 +1064,87 @@
     }
 
     function updateMiningPage() {
-        const container = document.getElementById('mining-action-area');
+        const safeContainer = document.getElementById('safe-mining-action-area');
+        const highRiskContainer = document.getElementById('high-risk-mining-action-area');
         const now = Date.now();
+        const isAnyMineActive = data.safeMiningState.isMining || data.highRiskMiningState.isMining;
 
-        if (data.miningState.isMining) {
-            if (now >= data.miningState.endTime) {
-                container.innerHTML = `
-                    <div id="mining-reward-display">Mining Complete!</div>
-                    <button id="mining-claim-btn" onclick="claimMiningReward()">Claim Reward</button>
+        // Safe Mine UI
+        if (data.safeMiningState.isMining) {
+            if (now >= data.safeMiningState.endTime) {
+                safeContainer.innerHTML = `
+                    <div class="mining-reward-display">Mining Complete!</div>
+                    <button class="mining-claim-btn" onclick="claimMiningReward('safe')">Claim Reward</button>
                 `;
             } else {
-                const timeLeft = data.miningState.endTime - now;
+                const timeLeft = data.safeMiningState.endTime - now;
                 const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
                 const seconds = Math.floor((timeLeft / 1000) % 60);
-                container.innerHTML = `
-                    <div id="mining-timer-display">Mining in progress...</div>
-                    <div id="mining-timer-display">${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</div>
+                safeContainer.innerHTML = `
+                    <div class="mining-timer-display">Mining in progress...</div>
+                    <div class="mining-timer-display">${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</div>
                 `;
             }
         } else {
-            container.innerHTML = '<button id="mining-start-btn" onclick="startMining()">Start Mining</button>';
+            safeContainer.innerHTML = `<button class="mining-start-btn" onclick="startMining('safe')" ${isAnyMineActive ? 'disabled' : ''}>Start Mining</button>`;
+        }
+
+        // High-Risk Mine UI
+        if (data.highRiskMiningState.isMining) {
+            if (now >= data.highRiskMiningState.endTime) {
+                highRiskContainer.innerHTML = `
+                    <div class="mining-reward-display">Expedition Complete!</div>
+                    <button class="mining-claim-btn" onclick="claimMiningReward('highRisk')">Claim Reward</button>
+                `;
+            } else {
+                const timeLeft = data.highRiskMiningState.endTime - now;
+                const minutes = Math.floor((timeLeft / 1000 / 60) % 60);
+                const seconds = Math.floor((timeLeft / 1000) % 60);
+                highRiskContainer.innerHTML = `
+                    <div class="mining-timer-display">Mining in progress...</div>
+                    <div class="mining-timer-display">${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}</div>
+                `;
+            }
+        } else {
+            highRiskContainer.innerHTML = `<button class="mining-start-btn" onclick="startMining('highRisk')" ${isAnyMineActive ? 'disabled' : ''}>Start High-Risk Mining</button>`;
         }
     }
 
-    function startMining() {
+    function startMining(type) {
         const durationMinutes = Math.random() * 8 + 2; // 2 to 10 minutes
         const durationMilliseconds = durationMinutes * 60 * 1000;
         
-        data.miningState.isMining = true;
-        data.miningState.endTime = Date.now() + durationMilliseconds;
+        if (type === 'safe') {
+            data.safeMiningState.isMining = true;
+            data.safeMiningState.endTime = Date.now() + durationMilliseconds;
+        } else if (type === 'highRisk') {
+            data.highRiskMiningState.isMining = true;
+            data.highRiskMiningState.endTime = Date.now() + durationMilliseconds;
+        }
 
-        showNotification(`Mining started! It will take around ${Math.round(durationMinutes)} minutes.`, 'quest');
+        showNotification(`${type === 'safe' ? 'Safe' : 'High-Risk'} mining started! It will take around ${Math.round(durationMinutes)} minutes.`, 'quest');
         updateUI();
     }
 
-    function claimMiningReward() {
-        const amount = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
-        data.craftingItems.low_mana_crystal += amount;
-        
-        data.miningState.isMining = false;
-        data.miningState.endTime = 0;
-
-        showNotification(`You found ${amount}x Low-tier Mana Crystal!`, 'level-up');
+    function claimMiningReward(type) {
+        if (type === 'safe') {
+            const amount = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+            data.craftingItems.low_mana_crystal += amount;
+            data.safeMiningState.isMining = false;
+            data.safeMiningState.endTime = 0;
+            showNotification(`You found ${amount}x Low-tier Mana Crystal!`, 'level-up');
+        } else if (type === 'highRisk') {
+            const chance = Math.random(); // Get a number between 0 and 1
+            if (chance < 0.25) { // 25% chance of failure
+                showNotification("Mining failed! The mana fluctuations were too unstable and you were forced to retreat empty-handed.", 'fail');
+            } else { // 75% chance of success
+                const amount = Math.floor(Math.random() * 6) + 5; // 5 to 10 crystals
+                data.craftingItems.low_mana_crystal += amount;
+                showNotification(`Success! You extracted ${amount}x Low-tier Mana Crystals from the volatile mine!`, 'level-up');
+            }
+            data.highRiskMiningState.isMining = false;
+            data.highRiskMiningState.endTime = 0;
+        }
         updateUI();
     }
 
@@ -1313,7 +1363,8 @@
           data.activeGates = loadedData.activeGates || [];
           data.gateLog = loadedData.gateLog || [];
           data.craftingItems = { ...freshData.craftingItems, ...loadedData.craftingItems };
-          data.miningState = { ...freshData.miningState, ...loadedData.miningState };
+          data.safeMiningState = { ...freshData.safeMiningState, ...loadedData.safeMiningState };
+          data.highRiskMiningState = { ...freshData.highRiskMiningState, ...loadedData.highRiskMiningState };
 
           showNotification('Progress Loaded Successfully!', 'quest');
           performDailyAndSpecialResets(); 
@@ -1409,7 +1460,7 @@
         showPage('status'); 
         setInterval(() => {
             updateGateTimers();
-            if (data.miningState.isMining) {
+            if (data.safeMiningState.isMining || data.highRiskMiningState.isMining) {
                 updateMiningPage();
             }
         }, 1000);
