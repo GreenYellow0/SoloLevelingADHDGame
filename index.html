@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solo Leveling System</title>
-  <!-- FAVICON TOEGEVOEGD -->
   <link rel="icon" type="image/png" href="favicon.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
@@ -123,7 +122,7 @@
 
     /* --- LIJSTEN (Quests, etc.) --- */
     ul { list-style: none; padding: 0; }
-    .quest-list li {
+    .quest-list li, #gate-log-list li {
       background: rgba(27, 34, 48, 0.4); padding: 15px; margin: 8px 0;
       cursor: pointer; border-left: 3px solid var(--border-color);
       display: flex; justify-content: space-between; align-items: center;
@@ -138,21 +137,13 @@
       background: transparent; border-left-color: #555;
     }
     #active-gates-list li button {
-        background: var(--panel-bg);
-        color: var(--system-blue-light);
-        border: 1px solid var(--border-color);
-        padding: 5px 15px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 4px;
+        background: var(--panel-bg); color: var(--system-blue-light);
+        border: 1px solid var(--border-color); padding: 5px 15px; font-weight: 600;
+        cursor: pointer; transition: all 0.2s ease; border-radius: 4px;
     }
-    #active-gates-list li button:hover {
-        background: var(--system-blue);
-        color: #fff;
-    }
+    #active-gates-list li button:hover { background: var(--system-blue); color: #fff; }
 
-    /* --- SHOP KNOPPEN (APART VAN GATES) --- */
+    /* --- SHOP KNOPPEN --- */
     .shop-menu button, .shop-submenu button {
         font-family: 'Montserrat', sans-serif; background: var(--panel-bg);
         color: var(--text-primary); border: 1px solid var(--border-color);
@@ -165,47 +156,46 @@
     .shop-submenu { display: none; }
     .shop-submenu.active { display: block; }
     
-    /* --- GECORRIGEERDE STIJL VOOR GATE KNOPPEN --- */
-    #gate-selection-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        overflow: hidden;
-        padding: 0;
-    }
-    #gate-selection-container h3 {
-        width: 100%;
-        margin: 15px;
-        border-bottom: none;
-    }
+    /* --- GATE KNOPPEN --- */
+    #gate-selection-container { display: flex; flex-wrap: wrap; gap: 0; border: 1px solid var(--border-color); border-radius: 4px; overflow: hidden; padding: 0; }
+    #gate-selection-container h3 { width: 100%; margin: 15px; border-bottom: none; }
     #gate-selection-container button {
-        flex-grow: 1;
-        background: transparent;
-        color: var(--text-secondary);
-        border: none;
-        border-right: 1px solid var(--border-color);
-        padding: 12px 10px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        border-radius: 0;
-        margin: 0;
+        flex-grow: 1; background: transparent; color: var(--text-secondary);
+        border: none; border-right: 1px solid var(--border-color);
+        padding: 12px 10px; font-weight: 600; cursor: pointer;
+        transition: all 0.2s ease; border-radius: 0; margin: 0;
     }
-    #gate-selection-container button:last-child {
-        border-right: none;
-    }
-    #gate-selection-container button:hover:not(:disabled) {
-        background: rgba(0, 132, 255, 0.15);
-        color: var(--system-blue-light);
-    }
-    #gate-selection-container button:disabled {
-        color: #444;
-        background: rgba(10, 16, 26, 0.5);
-        cursor: not-allowed;
-    }
+    #gate-selection-container button:last-child { border-right: none; }
+    #gate-selection-container button:hover:not(:disabled) { background: rgba(0, 132, 255, 0.15); color: var(--system-blue-light); }
+    #gate-selection-container button:disabled { color: #444; background: rgba(10, 16, 26, 0.5); cursor: not-allowed; }
     .gate-timer { font-weight: bold; color: var(--system-blue-light); }
+
+    /* --- CODEX --- */
+    #gate-log-list li { display: block; cursor: default; }
+    #gate-log-list li:hover { background: rgba(27, 34, 48, 0.4); border-left-color: var(--border-color); }
+    .log-header { display: flex; justify-content: space-between; font-weight: bold; }
+    .log-result-cleared { color: var(--system-blue-light); }
+    .log-result-failed, .log-result-declined { color: #ff5555; }
+    .log-body { font-size: 0.9em; color: var(--text-secondary); margin-top: 5px; }
+
+    /* --- TRADING POST --- */
+    #trading-post-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+    .trade-card {
+        background: var(--panel-gradient); border: 1px solid var(--border-color);
+        padding: 15px; margin: 0; display: flex; flex-direction: column;
+        align-items: center; text-align: center; width: 180px;
+        box-sizing: border-box; transition: all 0.3s ease;
+        clip-path: polygon(0 10px, 10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+    }
+    .trade-card:hover { transform: translateY(-5px); border-color: var(--system-blue); }
+    .trade-card img { width: 60px; height: 60px; margin-bottom: 10px; image-rendering: pixelated; }
+    .trade-card h4 { margin: 5px 0; color: var(--system-blue-light); }
+    .trade-card .owned-amount { color: var(--text-secondary); font-size: 0.9em; margin-bottom: 10px; }
+    .trade-card .trade-info { font-size: 0.8em; margin-bottom: 10px; font-style: italic; }
+    .trade-card input { width: 80%; text-align: center; background: #0A101A; border: 1px solid var(--border-color); color: #fff; padding: 5px; margin-bottom: 10px; border-radius: 4px; }
+    .trade-card button { background: var(--panel-bg); color: var(--text-primary); border: 1px solid var(--border-color); padding: 8px 12px; font-weight: 600; cursor: pointer; width: 80%; transition: all 0.2s ease; }
+    .trade-card button:hover:not(:disabled) { background: var(--system-blue); color: #fff; }
+    .trade-card button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* --- STATUS PAGINA --- */
     .status-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; gap: 20px; text-align: center; }
@@ -275,6 +265,7 @@
     <button onclick="showPage('status')">Status</button>
     <button onclick="showPage('quests')">Quests</button>
     <button onclick="showPage('gate')">Gate</button>
+    <button onclick="showPage('tradingPost')">Trading Post</button> <!-- NIEUWE KNOP -->
     <button onclick="showPage('shop')">Shop</button>
     <button onclick="showPage('inventory')">Inventory</button>
     <button onclick="showPage('generalInfo')">Info</button>
@@ -309,17 +300,26 @@
 
   <div id="gate" class="section">
     <h2>Gates</h2>
-    <div id="gate-selection-container" class="panel">
-      <!-- Gate buttons will be generated here by JavaScript -->
-    </div>
+    <div id="gate-selection-container" class="panel"></div>
     <h3>Active Gates</h3>
-    <ul id="active-gates-list" class="quest-list">
-      <!-- Active gates will be generated here -->
-    </ul>
+    <ul id="active-gates-list" class="quest-list"></ul>
     <h3>Statistics</h3>
     <div class="panel">
         <p>Accepted Gates: <span id="gates-accepted">0</span></p>
         <p>Declined Gates: <span id="gates-declined">0</span></p>
+    </div>
+    <h3>Codex of Gates</h3>
+    <ul id="gate-log-list"></ul>
+  </div>
+
+  <!-- NIEUWE TRADING POST PAGINA -->
+  <div id="tradingPost" class="section">
+    <h2>Trading Post</h2>
+    <div class="panel">
+        <p>Exchange items found in gates for valuable rewards.</p>
+        <div id="trading-post-container">
+            <!-- Trading cards will be generated here -->
+        </div>
     </div>
   </div>
 
@@ -422,6 +422,23 @@
   <div id="notification-container"></div>
 
   <script>
+    // --- DATE HELPER FUNCTIONS (BUG FIX) ---
+    function todayISO() {
+      const d = new Date();
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0, 10);
+    }
+    function isoToDate(iso) {
+      const [y, m, day] = iso.split('-').map(Number);
+      return new Date(y, m - 1, day);
+    }
+    function daysBetweenISO(fromISO, toISO) {
+      if (!fromISO || !toISO) return 0;
+      const a = isoToDate(fromISO).getTime();
+      const b = isoToDate(toISO).getTime();
+      return Math.round((b - a) / (1000 * 60 * 60 * 24));
+    }
+
     const ranks = ["F", "E", "D", "C", "B", "A", "S", "S+", "S++"];
     const rankMultiplier = [ 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4 ];
     const rankLevelRequirements = [ 1, 2, 4, 7, 10, 14, 18, 23, 29 ];
@@ -505,12 +522,14 @@
       level: 1, xp: 0, points: 0, gold: 0, silver: 0, rank: 0,
       activeGates: [],
       gateStats: { accepted: 0, declined: 0 },
+      gateLog: [], // NEW
+      craftingItems: { 'low_mana_crystal': 0, 'enhancement_gear': 0, 'marks_of_time': 0, 'design': 0 }, // NEW
       dailyQuests: [
         { id: 'brush_teeth_1', text: "Brush teeth (morning)", xp: 10, points: 2, done: false },
         { id: 'brush_teeth_2', text: "Brush teeth (evening)", xp: 10, points: 2, done: false },
         { id: 'take_meds', text: "Take meds (in less than 10 min)", xp: 15, points: 3, done: false },
         { id: 'limit_pmo', text: "Stay under 1.5h PMO total today", xp: 25, points: 10, done: false }, 
-        { id: 'sleep_meds', text: "Take sleeping meds before 2:30AM", xp: 25, points: 10, gold: 1, done: false }, // NIEUWE QUEST
+        { id: 'sleep_meds', text: "Take sleeping meds before 2:30AM", xp: 25, points: 10, gold: 1, done: false },
         { id: 'fresh_air', text: "Get fresh air (5 min outside or near window)", xp: 10, points: 3, done: false }, 
         { id: 'short_stretch', text: "Stretch or move for 1-2 minutes", xp: 15, points: 5, done: false }, 
         { id: 'short_workout', text: "Short workout (1–3 min, light effort)", xp: 20, points: 5, done: false },
@@ -539,14 +558,14 @@
         { text: "Perform gentle (naked) yoga/stretching for 10 mins", xp: 120, points: 35 }, { text: "One time sleep at (2AM)", xp: 120, points: 30 }
       ],
       activeSpecials: [],
-      lastDailyReset: new Date().toDateString(),
-      lastSpecialReset: new Date().toDateString(),
-      lastPhysicalReset: new Date().toDateString(),
+      lastDailyReset: todayISO(),
+      lastSpecialReset: todayISO(),
+      lastPhysicalReset: todayISO(),
       dailyStreaks: {
         'brush_teeth_daily': { current: 0, lastCompletionDate: null },
         'take_meds_daily': { current: 0, lastCompletionDate: null },
-        'sleep_meds_daily': { current: 0, lastCompletionDate: null }, // NIEUWE STREAK TRACKER
-        'limit_pmo_daily': { current: 0, lastCompletionDate: null }   // NIEUWE STREAK TRACKER
+        'sleep_meds_daily': { current: 0, lastCompletionDate: null },
+        'limit_pmo_daily': { current: 0, lastCompletionDate: null }
       },
       streakQuests: [
         // Brush Teeth Streaks
@@ -559,14 +578,14 @@
         { id: 'meds_7_days', parentQuestId: 'take_meds_daily', threshold: 7, text: "Took meds 1 week in a row", xp: 600, points: 120, gold: 8, done: false },
         { id: 'meds_14_days', parentQuestId: 'take_meds_daily', threshold: 14, text: "Took meds 2 weeks in a row", xp: 1200, points: 240, gold: 15, done: false },
         { id: 'meds_30_days', parentQuestId: 'take_meds_daily', threshold: 30, text: "Took meds 1 month in a row", xp: 3000, points: 600, gold: 30, done: false },
-        // NIEUWE SLEEPING MEDS STREAKS
+        // Sleeping Meds Streaks
         { id: 'sleep_meds_2_days', parentQuestId: 'sleep_meds_daily', threshold: 2, text: "Take sleeping meds 2 days in a row", xp: 150, points: 30, gold: 2, done: false },
         { id: 'sleep_meds_5_days', parentQuestId: 'sleep_meds_daily', threshold: 5, text: "Take sleeping meds 5 days in a row", xp: 300, points: 70, gold: 5, done: false },
         { id: 'sleep_meds_7_days', parentQuestId: 'sleep_meds_daily', threshold: 7, text: "Take sleeping meds 1 week in a row", xp: 500, points: 80, gold: 7, done: false },
         { id: 'sleep_meds_14_days', parentQuestId: 'sleep_meds_daily', threshold: 14, text: "Take sleeping meds 2 weeks in a row", xp: 800, points: 250, gold: 15, done: false },
         { id: 'sleep_meds_21_days', parentQuestId: 'sleep_meds_daily', threshold: 21, text: "Take sleeping meds 3 weeks in a row", xp: 1250, points: 350, gold: 25, done: false },
         { id: 'sleep_meds_30_days', parentQuestId: 'sleep_meds_daily', threshold: 30, text: "Take sleeping meds 1 month in a row", xp: 2000, points: 500, gold: 50, done: false },
-        // NIEUWE PMO STREAKS
+        // PMO Streaks
         { id: 'pmo_2_days', parentQuestId: 'limit_pmo_daily', threshold: 2, text: "Stay under 1.5h PMO 2 days in a row", xp: 200, points: 40, gold: 2, done: false },
         { id: 'pmo_5_days', parentQuestId: 'limit_pmo_daily', threshold: 5, text: "Stay under 1.5h PMO 5 days in a row", xp: 500, points: 100, gold: 5, done: false },
         { id: 'pmo_7_days', parentQuestId: 'limit_pmo_daily', threshold: 7, text: "Stay under 1.5h PMO 1 week in a row", xp: 900, points: 180, gold: 10, done: false },
@@ -574,54 +593,37 @@
         { id: 'pmo_21_days', parentQuestId: 'limit_pmo_daily', threshold: 21, text: "Stay under 1.5h PMO 3 weeks in a row", xp: 2400, points: 500, gold: 35, done: false },
         { id: 'pmo_30_days', parentQuestId: 'limit_pmo_daily', threshold: 30, text: "Stay under 1.5h PMO 1 month in a row", xp: 3500, points: 800, gold: 60, done: false }
       ],
-shopWeapons: [
-  // F‑Rank (requiredRank: 0)
-  { id: 'orcs_broadsword', name: "Orc's Broadsword", cost: 30, currency: "silver", requiredRank: 0, icon: 'GSWeapon_OrcGreatSword.png', ability: "Heavy and rusty. Better than bare hands." },
-  { id: 'lizard_glaive', name: "Lizard Glaive", cost: 35, currency: "silver", requiredRank: 0, icon: 'GSWeapon_LizardGlaive.png', ability: "Crooked shaft, dull tip. Still reaches." },
-  { id: 'grave_keepers_scythe', name: "Grave Keeper's Scythe", cost: 40, currency: "silver", requiredRank: 0, icon: 'GSWeapon_GravekeeperScythe.png', ability: "Old and chipped. A gravekeeper still used it." },
-
-  // E‑Rank (requiredRank: 1)
-  { id: 'ice_elfs_bow', name: "Ice Elf's Bow", cost: 60, currency: "silver", requiredRank: 1, icon: 'GSWeapon_IceElfBow.png', ability: "Wild tension, poor accuracy—but it shoots." },
-  { id: 'rock_golem_hammer', name: "Rock Golem Hammer", cost: 65, currency: "silver", requiredRank: 1, icon: 'GSWeapon_StoneGolemHammer.png', ability: "Heavy club made from cracked stone." },
-  { id: 'sandstorm_cube', name: "Sandstorm Cube", cost: 70, currency: "silver", requiredRank: 1, icon: 'GSWeapon_SandCentipedeCube.png', ability: "Weird artifact that rattles when you swing." },
-
-  // D‑Rank (requiredRank: 2)
-  { id: 'arachnids_hand_crossbow', name: "Arachnid's Hand Crossbow", cost: 90, currency: "silver", requiredRank: 2, icon: 'GSWeapon_GiantArachne_01.png', ability: "Light crossbow—shoots fast, not far." },
-  { id: 'frostbite_falchion', name: "Frostbite Falchion", cost: 95, currency: "silver", requiredRank: 2, icon: 'GSWeapon_FrostIceSword.png', ability: "Cold blade that chills the air." },
-  { id: 'dragonscale_broadsword', name: "Dragonscale Broadsword", cost: 100, currency: "silver", requiredRank: 2, icon: 'GSWeapon_DragnScaleGreatBlade.png', ability: "Scaled edge with minor sparkle." },
-
-  // C‑Rank (requiredRank: 3)
-  { id: 'lustrous_dragon_sword', name: "Lustrous Dragon Sword", cost: 150, currency: "silver", requiredRank: 3, icon: 'GSWeapon_Lustrous_Dragon_Sword.png', ability: "A bright steel edge said to inspire awe." },
-  { id: 'knights_sword', name: "Knight's Sword", cost: 160, currency: "silver", requiredRank: 3, icon: 'GSWeapon_KnightSword.png', ability: "Reliable blade for fledgling fighters." },
-
-  // B‑Rank (requiredRank: 4)
-  { id: 'west_wind', name: "West Wind", cost: 180, currency: "gold", requiredRank: 4, icon: 'GSWeapon_Westwind.png', ability: "Swift as the wind—light and nimble." },
-  { id: 'kim_sangshiks_sword', name: "Kim Sangshik's Sword", cost: 185, currency: "gold", requiredRank: 4, icon: 'GSWeapon_KimSangShik_01.png', ability: "Blade with a subtle personal touch." },
-
-  // A‑Rank (requiredRank: 5)
-  { id: 'juicy_grilled_skewer', name: "Juicy Grilled Skewer", cost: 220, currency: "gold", requiredRank: 5, icon: 'skewer.png', ability: "Oddly satisfying to swing." },
-  { id: 'radiru_family_longbow', name: "Radiru Family's Longbow", cost: 230, currency: "gold", requiredRank: 5, icon: 'GSWeapon_RadiruGreatBow_01.png', ability: "Crafted for long-range precision." },
-  { id: 'orb_of_avarice', name: "Orb of Avarice", cost: 240, currency: "gold", requiredRank: 5, icon: 'GSWeapon_OrbofAvarice.png', ability: "Heavy orb that hums greedily." },
-
-  // S‑Rank (requiredRank: 6)
-  { id: 'demon_kings_longsword', name: "Demon King’s Longsword", cost: 300, currency: "gold", requiredRank: 6, icon: 'GSWeapon_DemonKingLongSword_01.png', ability: "Heavy blade forged in ancient dark fires." },
-  { id: 'zekes_fragment', name: "Zeke's Fragment", cost: 310, currency: "gold", requiredRank: 6, icon: 'zeke.png', ability: "Shattered gem glowing with latent power." },
-
-  // S+‑Rank (requiredRank: 7)
-  { id: 'winter_fang', name: "Winter Fang", cost: 350, currency: "gold", requiredRank: 7, icon: 'weapon_winter.png', ability: "Icy edge that freezes the breath around it." },
-  { id: 'stormbringer', name: "Stormbringer", cost: 360, currency: "gold", requiredRank: 7, icon: 'weapon_stormbringer.png', ability: "Crackling blade that channels storms." },
-
-  // S++‑Rank (requiredRank: 8)
-  { id: 'phoenix_soul', name: "Phoenix Soul", cost: 400, currency: "gold", requiredRank: 8, icon: 'phe_icon.png', ability: "Blazing aura in a slender form—a living fire." },
-  { id: 'thethis_grimoire', name: "Thethis' Grimoire", cost: 410, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Tethis_01.png', ability: "Ancient tome of unknown incantations." },
-  { id: 'moonshadow', name: "Moonshadow", cost: 420, currency: "gold", requiredRank: 8, icon: 'GSWeapon_MoonShadow.png', ability: "Stealth blade wreathed in lunar mist." },
-  { id: 'demonic_plum_flower_sword', name: "Demonic Plum Flower Sword", cost: 430, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Demonic_Plum_Flower_Sword.png', ability: "Elegant and deadly, petal-blade forged in hell." },
-  { id: 'demon_kings_daggers', name: "Demon King's Daggers", cost: 440, currency: "gold", requiredRank: 8, icon: 'GSWeapon_DemonKingsDaggers.png', ability: "Twin daggers that thirst for blood." },
-  { id: 'truth_kasakas_venom_fang', name: "Truth: Kasaka's Venom Fang", cost: 490, currency: "gold", requiredRank: 8, icon: 'weapon_truth.png', ability: "Venom-laced blade that whispers death." },
-  { id: 'vulcans_rage', name: "Vulcan's Rage", cost: 500, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Vulcan.png', ability: "Inferno-forged weapon that burns through the soul." },
-  { id: 'skadi', name: "Skadi", cost: 530, currency: "gold", requiredRank: 8, icon: 'skadi_weapon.png', ability: "Chilling spear of frost and fate." },
-  { id: 'the_huntsman', name: "The Huntsman", cost: 540, currency: "gold", requiredRank: 8, icon: 'GSWeapon_TheHuntsman.png', ability: "A hunter’s edge: silent, sharp, merciless." }
-],
+      shopWeapons: [
+        { id: 'orcs_broadsword', name: "Orc's Broadsword", cost: 30, currency: "silver", requiredRank: 0, icon: 'GSWeapon_OrcGreatSword.png', ability: "Heavy and rusty. Better than bare hands." },
+        { id: 'lizard_glaive', name: "Lizard Glaive", cost: 35, currency: "silver", requiredRank: 0, icon: 'GSWeapon_LizardGlaive.png', ability: "Crooked shaft, dull tip. Still reaches." },
+        { id: 'grave_keepers_scythe', name: "Grave Keeper's Scythe", cost: 40, currency: "silver", requiredRank: 0, icon: 'GSWeapon_GravekeeperScythe.png', ability: "Old and chipped. A gravekeeper still used it." },
+        { id: 'ice_elfs_bow', name: "Ice Elf's Bow", cost: 60, currency: "silver", requiredRank: 1, icon: 'GSWeapon_IceElfBow.png', ability: "Wild tension, poor accuracy—but it shoots." },
+        { id: 'rock_golem_hammer', name: "Rock Golem Hammer", cost: 65, currency: "silver", requiredRank: 1, icon: 'GSWeapon_StoneGolemHammer.png', ability: "Heavy club made from cracked stone." },
+        { id: 'sandstorm_cube', name: "Sandstorm Cube", cost: 70, currency: "silver", requiredRank: 1, icon: 'GSWeapon_SandCentipedeCube.png', ability: "Weird artifact that rattles when you swing." },
+        { id: 'arachnids_hand_crossbow', name: "Arachnid's Hand Crossbow", cost: 90, currency: "silver", requiredRank: 2, icon: 'GSWeapon_GiantArachne_01.png', ability: "Light crossbow—shoots fast, not far." },
+        { id: 'frostbite_falchion', name: "Frostbite Falchion", cost: 95, currency: "silver", requiredRank: 2, icon: 'GSWeapon_FrostIceSword.png', ability: "Cold blade that chills the air." },
+        { id: 'dragonscale_broadsword', name: "Dragonscale Broadsword", cost: 100, currency: "silver", requiredRank: 2, icon: 'GSWeapon_DragnScaleGreatBlade.png', ability: "Scaled edge with minor sparkle." },
+        { id: 'lustrous_dragon_sword', name: "Lustrous Dragon Sword", cost: 150, currency: "silver", requiredRank: 3, icon: 'GSWeapon_Lustrous_Dragon_Sword.png', ability: "A bright steel edge said to inspire awe." },
+        { id: 'knights_sword', name: "Knight's Sword", cost: 160, currency: "silver", requiredRank: 3, icon: 'GSWeapon_KnightSword.png', ability: "Reliable blade for fledgling fighters." },
+        { id: 'west_wind', name: "West Wind", cost: 180, currency: "gold", requiredRank: 4, icon: 'GSWeapon_Westwind.png', ability: "Swift as the wind—light and nimble." },
+        { id: 'kim_sangshiks_sword', name: "Kim Sangshik's Sword", cost: 185, currency: "gold", requiredRank: 4, icon: 'GSWeapon_KimSangShik_01.png', ability: "Blade with a subtle personal touch." },
+        { id: 'juicy_grilled_skewer', name: "Juicy Grilled Skewer", cost: 220, currency: "gold", requiredRank: 5, icon: 'skewer.png', ability: "Oddly satisfying to swing." },
+        { id: 'radiru_family_longbow', name: "Radiru Family's Longbow", cost: 230, currency: "gold", requiredRank: 5, icon: 'GSWeapon_RadiruGreatBow_01.png', ability: "Crafted for long-range precision." },
+        { id: 'orb_of_avarice', name: "Orb of Avarice", cost: 240, currency: "gold", requiredRank: 5, icon: 'GSWeapon_OrbofAvarice.png', ability: "Heavy orb that hums greedily." },
+        { id: 'demon_kings_longsword', name: "Demon King’s Longsword", cost: 300, currency: "gold", requiredRank: 6, icon: 'GSWeapon_DemonKingLongSword_01.png', ability: "Heavy blade forged in ancient dark fires." },
+        { id: 'zekes_fragment', name: "Zeke's Fragment", cost: 310, currency: "gold", requiredRank: 6, icon: 'zeke.png', ability: "Shattered gem glowing with latent power." },
+        { id: 'winter_fang', name: "Winter Fang", cost: 350, currency: "gold", requiredRank: 7, icon: 'weapon_winter.png', ability: "Icy edge that freezes the breath around it." },
+        { id: 'stormbringer', name: "Stormbringer", cost: 360, currency: "gold", requiredRank: 7, icon: 'weapon_stormbringer.png', ability: "Crackling blade that channels storms." },
+        { id: 'phoenix_soul', name: "Phoenix Soul", cost: 400, currency: "gold", requiredRank: 8, icon: 'phe_icon.png', ability: "Blazing aura in a slender form—a living fire." },
+        { id: 'thethis_grimoire', name: "Thethis' Grimoire", cost: 410, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Tethis_01.png', ability: "Ancient tome of unknown incantations." },
+        { id: 'moonshadow', name: "Moonshadow", cost: 420, currency: "gold", requiredRank: 8, icon: 'GSWeapon_MoonShadow.png', ability: "Stealth blade wreathed in lunar mist." },
+        { id: 'demonic_plum_flower_sword', name: "Demonic Plum Flower Sword", cost: 430, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Demonic_Plum_Flower_Sword.png', ability: "Elegant and deadly, petal-blade forged in hell." },
+        { id: 'demon_kings_daggers', name: "Demon King's Daggers", cost: 440, currency: "gold", requiredRank: 8, icon: 'GSWeapon_DemonKingsDaggers.png', ability: "Twin daggers that thirst for blood." },
+        { id: 'truth_kasakas_venom_fang', name: "Truth: Kasaka's Venom Fang", cost: 490, currency: "gold", requiredRank: 8, icon: 'weapon_truth.png', ability: "Venom-laced blade that whispers death." },
+        { id: 'vulcans_rage', name: "Vulcan's Rage", cost: 500, currency: "gold", requiredRank: 8, icon: 'GSWeapon_Vulcan.png', ability: "Inferno-forged weapon that burns through the soul." },
+        { id: 'skadi', name: "Skadi", cost: 530, currency: "gold", requiredRank: 8, icon: 'skadi_weapon.png', ability: "Chilling spear of frost and fate." },
+        { id: 'the_huntsman', name: "The Huntsman", cost: 540, currency: "gold", requiredRank: 8, icon: 'GSWeapon_TheHuntsman.png', ability: "A hunter’s edge: silent, sharp, merciless." }
+      ],
       shopItems: [
         { id: 'diamond_item', name: "Diamond", cost: 100, currency: "points", rewardType: "gold", rewardAmount: 1, icon: 'Diament.png', ability: "Converts 100 Points into 1 Gold." },
         { id: 'mana_crystal', name: "Mana Crystal", cost: 10, currency: "points", rewardType: "silver", rewardAmount: 50, icon: 'ManaCrystal.png', ability: "Converts 10 Points into 50 Silver." },
@@ -710,6 +712,7 @@ shopWeapons: [
       updateInventoryList();
       updateRankUpgradeInfoTable();
       updateGatePage();
+      updateTradingPost();
     }
 
     function openModal(type, index) {
@@ -813,6 +816,7 @@ shopWeapons: [
 
         document.getElementById('gates-accepted').textContent = data.gateStats.accepted;
         document.getElementById('gates-declined').textContent = data.gateStats.declined;
+        updateCodex();
     }
 
     function enterGate(rankIndex) {
@@ -821,7 +825,7 @@ shopWeapons: [
             showNotification('No quests available for this rank.', 'quest');
             return;
         }
-        tempGateQuest = { ...pool[Math.floor(Math.random() * pool.length)] };
+        tempGateQuest = { ...pool[Math.floor(Math.random() * pool.length)], rank: ranks[rankIndex] };
         
         document.getElementById('gateModalText').textContent = tempGateQuest.text;
         document.getElementById('gateModalRewards').textContent = `Rewards: ${tempGateQuest.xp} XP, ${tempGateQuest.points} Points, ${tempGateQuest.gold} Gold`;
@@ -845,7 +849,9 @@ shopWeapons: [
     }
 
     function declineGateQuest() {
+        if (!tempGateQuest) return;
         data.gateStats.declined++;
+        addGateToCodex(tempGateQuest, 'Declined');
         document.getElementById('gateModal').classList.remove('active');
         tempGateQuest = null;
         updateUI();
@@ -861,6 +867,8 @@ shopWeapons: [
         data.gold += gate.gold;
 
         showNotification(`Gate Cleared! +${gate.xp} XP, +${gate.points} Points, +${gate.gold} Gold`, 'level-up');
+        addGateToCodex(gate, 'Cleared');
+        generateGateDrops(data.rank);
         
         data.activeGates.splice(gateIndex, 1);
         checkLevelUp();
@@ -873,6 +881,7 @@ shopWeapons: [
         data.activeGates = data.activeGates.filter(gate => {
             if (gate.expiresAt < now) {
                 showNotification(`Gate quest "${gate.text}" expired.`, 'quest');
+                addGateToCodex(gate, 'Failed');
                 changed = true;
                 return false;
             }
@@ -893,6 +902,151 @@ shopWeapons: [
         if (changed) {
             updateUI();
         }
+    }
+
+    function addGateToCodex(gate, result) {
+        const logEntry = {
+            date: todayISO(),
+            rank: gate.rank,
+            text: gate.text,
+            result: result,
+            rewards: result === 'Cleared' ? { xp: gate.xp, points: gate.points, gold: gate.gold } : null
+        };
+        data.gateLog.unshift(logEntry); // Add to the beginning of the array
+    }
+
+    function updateCodex() {
+        const list = document.getElementById('gate-log-list');
+        list.innerHTML = '';
+        if (data.gateLog.length === 0) {
+            list.innerHTML = '<li style="cursor:default; opacity: 0.6;">Your gate history will appear here.</li>';
+            return;
+        }
+        data.gateLog.forEach(entry => {
+            const li = document.createElement('li');
+            let rewardsText = '';
+            if (entry.result === 'Cleared' && entry.rewards) {
+                rewardsText = ` | Rewards: ${entry.rewards.xp} XP, ${entry.rewards.points} P, ${entry.rewards.gold} G`;
+            }
+            li.innerHTML = `
+                <div class="log-header">
+                    <span>${entry.date} - ${entry.rank}-Rank Gate</span>
+                    <span class="log-result-${entry.result.toLowerCase()}">${entry.result}</span>
+                </div>
+                <div class="log-body">
+                    ${entry.text}${rewardsText}
+                </div>
+            `;
+            list.appendChild(li);
+        });
+    }
+
+    function generateGateDrops(rankIndex) {
+        // Define drop pools and weights
+        const dropPools = {
+            common: ['low_mana_crystal', 'design'],
+            uncommon: ['enhancement_gear'],
+            rare: ['marks_of_time']
+        };
+        const weights = {
+            // Rank: [common%, uncommon%, rare%]
+            0: [80, 19, 1], // F
+            1: [75, 23, 2], // E
+            2: [70, 25, 5], // D
+            3: [65, 28, 7], // C
+            4: [60, 30, 10], // B
+            5: [55, 33, 12], // A
+            6: [50, 35, 15], // S
+            7: [45, 35, 20], // S+
+            8: [40, 35, 25]  // S++
+        };
+
+        const currentWeights = weights[rankIndex] || weights[0];
+        
+        // Determine number of drops
+        let numDrops = 1 + Math.floor(Math.random() * (rankIndex / 2 + 1)); // More drops at higher ranks
+        if (Math.random() < 0.05) numDrops = 5; // 5% chance for a jackpot of 5 items
+        numDrops = Math.min(numDrops, 5); // Cap at 5
+
+        const drops = {};
+        for (let i = 0; i < numDrops; i++) {
+            const rand = Math.random() * 100;
+            let item;
+            if (rand < currentWeights[0]) {
+                item = dropPools.common[Math.floor(Math.random() * dropPools.common.length)];
+            } else if (rand < currentWeights[0] + currentWeights[1]) {
+                item = dropPools.uncommon[Math.floor(Math.random() * dropPools.uncommon.length)];
+            } else {
+                item = dropPools.rare[Math.floor(Math.random() * dropPools.rare.length)];
+            }
+            
+            data.craftingItems[item]++;
+            drops[item] = (drops[item] || 0) + 1;
+        }
+
+        let notificationText = "Gate Drops: ";
+        notificationText += Object.keys(drops).map(key => `${drops[key]}x ${key.replace(/_/g, ' ')}`).join(', ');
+        showNotification(notificationText, 'quest');
+    }
+
+    function updateTradingPost() {
+        const container = document.getElementById('trading-post-container');
+        container.innerHTML = '';
+
+        const tradeOptions = [
+            { id: 'low_mana_crystal', name: 'Low-tier Mana Crystal', icon: 'ManaCrystal.png', needed: 3, reward: '+150 Silver' },
+            { id: 'enhancement_gear', name: 'Weapon Enhancement Gear I', icon: 'WeaponEnhandcementGear.png', needed: 2, reward: '+25 XP' },
+            { id: 'marks_of_time', name: 'Marks of Time', icon: 'MarksOfTime.png', needed: 3, reward: '+1 Gold' },
+            { id: 'design', name: 'Design', icon: 'Design.png', needed: 5, reward: '+300 Silver' }
+        ];
+
+        tradeOptions.forEach(opt => {
+            const card = document.createElement('div');
+            card.className = 'trade-card';
+            card.innerHTML = `
+                <img src="${opt.icon}" alt="${opt.name}">
+                <h4>${opt.name}</h4>
+                <div class="owned-amount">You have: ${data.craftingItems[opt.id]}</div>
+                <div class="trade-info">Sell ${opt.needed} for ${opt.reward}</div>
+                <input type="number" id="trade-input-${opt.id}" placeholder="Amount">
+                <button id="trade-btn-${opt.id}" onclick="sellItems('${opt.id}', ${opt.needed})">Sell</button>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function sellItems(itemId, needed) {
+        const input = document.getElementById(`trade-input-${itemId}`);
+        const amount = parseInt(input.value, 10);
+
+        if (isNaN(amount) || amount <= 0) {
+            showNotification("Please enter a valid amount.", 'quest');
+            return;
+        }
+        if (amount > data.craftingItems[itemId]) {
+            showNotification("You don't have enough items.", 'quest');
+            return;
+        }
+        if (amount % needed !== 0) {
+            showNotification(`Amount must be a multiple of ${needed}.`, 'quest');
+            return;
+        }
+
+        data.craftingItems[itemId] -= amount;
+        const transactions = amount / needed;
+
+        let rewardText = "";
+        switch (itemId) {
+            case 'low_mana_crystal': data.silver += 150 * transactions; rewardText = `+${150 * transactions} Silver`; break;
+            case 'enhancement_gear': data.xp += 25 * transactions; rewardText = `+${25 * transactions} XP`; break;
+            case 'marks_of_time': data.gold += 1 * transactions; rewardText = `+${1 * transactions} Gold`; break;
+            case 'design': data.silver += 300 * transactions; rewardText = `+${300 * transactions} Silver`; break;
+        }
+        
+        showNotification(`Trade successful! ${rewardText}`, 'level-up');
+        input.value = '';
+        checkLevelUp();
+        updateUI();
     }
 
     function getRankUpgradeCost(targetRankIndex) {
@@ -1040,7 +1194,7 @@ shopWeapons: [
     }
 
     function checkStreaks(completedDailyQuestId) {
-        const today = new Date().toDateString();
+        const today = todayISO();
         
         const questToStreakMap = {
             'brush_teeth_1': 'brush_teeth_daily',
@@ -1071,18 +1225,19 @@ shopWeapons: [
         });
     }
 
-    function updateSingleStreak(streakKey, today) {
+    function updateSingleStreak(streakKey, todayISO) {
       let streak = data.dailyStreaks[streakKey];
       if (!streak) { streak = { current: 0, lastCompletionDate: null }; data.dailyStreaks[streakKey] = streak; }
-      const lastDate = streak.lastCompletionDate ? new Date(streak.lastCompletionDate) : null;
-      const currentDate = new Date(today);
-      if (lastDate && currentDate.toDateString() === lastDate.toDateString()) { return; }
-      if (lastDate && (currentDate.getTime() - lastDate.getTime()) <= (24 * 60 * 60 * 1000)) {
+      
+      const lastDateISO = streak.lastCompletionDate;
+      if (lastDateISO === todayISO) { return; }
+
+      if (lastDateISO && daysBetweenISO(lastDateISO, todayISO) === 1) {
         streak.current++;
       } else {
         streak.current = 1;
       }
-      streak.lastCompletionDate = today;
+      streak.lastCompletionDate = todayISO;
     }
 
     function saveProgress() {
@@ -1107,6 +1262,8 @@ shopWeapons: [
           data.gateStats = { ...freshData.gateStats, ...loadedData.gateStats };
           data.dailyStreaks = { ...freshData.dailyStreaks, ...loadedData.dailyStreaks };
           data.activeGates = loadedData.activeGates || [];
+          data.gateLog = loadedData.gateLog || [];
+          data.craftingItems = { ...freshData.craftingItems, ...loadedData.craftingItems };
 
           showNotification('Progress Loaded Successfully!', 'quest');
           performDailyAndSpecialResets(); 
@@ -1134,7 +1291,7 @@ shopWeapons: [
     }
 
     function checkDailyReset() {
-      const today = new Date().toDateString();
+      const today = todayISO();
       if (data.lastDailyReset !== today) {
         data.dailyQuests.forEach(q => q.done = false);
         data.lastDailyReset = today;
@@ -1146,35 +1303,38 @@ shopWeapons: [
       for (const key in data.dailyStreaks) {
           const streak = data.dailyStreaks[key];
           if (streak.lastCompletionDate) {
-              const lastDate = new Date(streak.lastCompletionDate);
-              const currentDate = new Date(today);
-              const diffTime = currentDate.getTime() - lastDate.getTime();
-              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-              if (diffDays > 1) { streak.current = 0; }
+              if (daysBetweenISO(streak.lastCompletionDate, today) > 1) {
+                  streak.current = 0;
+              }
           }
       }
     }
 
     function resetSpecials() {
-      const today = new Date();
-      const lastSpecialResetDate = new Date(data.lastSpecialReset);
-      const diffTime = Math.abs(today - lastSpecialResetDate);
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      if (diffDays >= 3 || data.activeSpecials.length === 0) {
+      const today = todayISO();
+      const last = data.lastSpecialReset || today;
+      const diffDays = daysBetweenISO(last, today);
+
+      if (data.activeSpecials.length === 0 || diffDays >= 3) {
         data.activeSpecials = [];
         const availableQuests = [...data.allSpecialQuests];
         for (let i = availableQuests.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [availableQuests[i], availableQuests[j]] = [availableQuests[j], availableQuests[i]];
+          const j = Math.floor(Math.random() * (i + 1));
+          [availableQuests[i], availableQuests[j]] = [availableQuests[j], availableQuests[i]];
         }
-        for (let i = 0; i < 5; i++) {
-          if (availableQuests.length === 0) break;
+        for (let i = 0; i < 5 && availableQuests.length > 0; i++) {
           data.activeSpecials.push({ ...availableQuests.shift(), daysLeft: 3, done: false });
         }
-        data.lastSpecialReset = today.toDateString();
-      } else if (diffDays > 0) {
-        data.activeSpecials.forEach(q => { if (!q.done && q.daysLeft > 0) { q.daysLeft -= diffDays; } });
+        data.lastSpecialReset = today;
+        return;
+      }
+
+      if (diffDays > 0) {
+        data.activeSpecials.forEach(q => {
+          if (!q.done && q.daysLeft > 0) q.daysLeft = Math.max(0, q.daysLeft - diffDays);
+        });
         data.activeSpecials = data.activeSpecials.filter(q => q.daysLeft > 0 || q.done);
+        data.lastSpecialReset = today;
       }
     }
 
